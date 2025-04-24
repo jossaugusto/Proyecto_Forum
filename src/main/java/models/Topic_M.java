@@ -27,7 +27,11 @@ public class Topic_M implements Topic_I{
 	public static final String CREATE_TOPIC = "INSERT INTO temas (titulo, contenido, id_usuario, id_categoria) VALUES (?,?,?,?);";
 	public static final String UPDATE_TOPIC = "UPDATE temas SET titulo = ?, contenido = ?, id_usuario = ?, id_categoria = ?, fecha_publicacion = ? WHERE id_tema = ?;";
 	public static final String DELETE_USER = "UPDATE temas SET flgstate = 0 WHERE id_tema = ?;";
-	public static final String GET_TOPICS_BY_CATEGORY_ID = "SELECT * FROM temas WHERE id_categoria = ? and flgstate = 1;";
+	public static final String GET_TOPICS_BY_CATEGORY_ID = "SELECT t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
+			+ "FROM temas t\r\n"
+			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
+			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
+			+ "WHERE t.id_categoria = ? AND t.flgstate = 1;";
 	public static final String GET_TOPICS_BY_USER_ID = "SELECT * FROM temas WHERE id_usuario = ? and flgstate = 1;";
 	
 	// Ready
@@ -127,6 +131,8 @@ public class Topic_M implements Topic_I{
 		PreparedStatement ps = null;
 
 		try {
+			System.out.println("Entrando a crear tema");
+			
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(CREATE_TOPIC);
 			ps.setString(1, topic.getTitulo());
@@ -134,12 +140,17 @@ public class Topic_M implements Topic_I{
 			ps.setInt(3, topic.getId_usuario());
 			ps.setInt(4, topic.getId_categoria());
 
+			System.out.println("titulo: " + topic.getTitulo());
+			System.out.println("contenido: " + topic.getContenido());
+			System.out.println("id_usuario: " + topic.getId_usuario());
+			System.out.println("id_categoria: " + topic.getId_categoria());
+			
 			int value = ps.executeUpdate();
 			if (value > 0) {
 				result = true;
 			}
 		} catch (Exception e) {
-			System.out.println("Error creating user>>> " + e.getMessage());
+			System.out.println("Error creating topic>>> " + e.getMessage());
 		} finally {
 			try {
 				if (ps != null) {
@@ -238,6 +249,9 @@ public class Topic_M implements Topic_I{
 				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				topic.setEstado(rs.getString("estado"));
 				topic.setVistas(rs.getInt("vistas"));
+				topic.setNombreUsuario(rs.getString("nombreUsuario"));
+				topic.setApellidoUsuario(rs.getString("apellidoUsuario"));
+				topic.setNombreCategoria(rs.getString("nombreCategoria"));
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {

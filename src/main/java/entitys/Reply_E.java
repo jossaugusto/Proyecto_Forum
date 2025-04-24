@@ -2,7 +2,7 @@ package entitys;
 
 import java.util.Date;
 
-public class Replay_E {
+public class Reply_E {
     private int id_respuesta;
     private int id_tema;
     private int id_usuario;
@@ -10,7 +10,21 @@ public class Replay_E {
     private Date fecha_publicacion;
     private boolean es_respuesta_aceptada;
     private int id_respuesta_padre;
+    private String nombreUsuario;
+    private String apellidoUsuario;
     
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+	public void setNombreUsuario(String nombreUsuario) {
+		this.nombreUsuario = nombreUsuario;
+	}
+	public String getApellidoUsuario() {
+		return apellidoUsuario;
+	}
+	public void setApellidoUsuario(String apellidoUsuario) {
+		this.apellidoUsuario = apellidoUsuario;
+	}
 	public int getId_respuesta() {
 		return id_respuesta;
 	}

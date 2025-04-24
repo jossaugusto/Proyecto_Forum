@@ -8,9 +8,9 @@ public abstract class DAOFactory {
 
 	// List all the DAO types here
 	public abstract User_I getUser();
-	public abstract Category_I getCatogory();
+	public abstract Category_I getCategory();
 	public abstract Topic_I getTopic();
-	public abstract Replay_I getReply();
+	public abstract Reply_I getReply();
 	public abstract Notification_I getNotification();
 
 	public static DAOFactory getDAOFactory(int factory) {

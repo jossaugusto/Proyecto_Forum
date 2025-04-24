@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import db.MySQLConnection;
-import entitys.Replay_E;
-import interfaces.Replay_I;
+import entitys.Reply_E;
+import interfaces.Reply_I;
 
-public class Replay_M implements Replay_I{
+public class Reply_M implements Reply_I{
 
 	// CRUD operations
 	public static final String GET_ALL_REPLIES = "SELECT * FROM respuestas WHERE flgstate = 1;";
@@ -18,13 +18,17 @@ public class Replay_M implements Replay_I{
 	public static final String CREATE_REPLY = "INSERT INTO respuestas (id_tema, id_usuario, contenido) VALUES (?,?,?);";
 	public static final String UPDATE_REPLY = "UPDATE respuestas SET id_tema = ?, id_usuario = ?, contenido = ? WHERE id_respuesta = ?;";
 	public static final String DELETE_REPLY = "UPDATE respuestas SET flgstate = 0 WHERE id_respuesta = ?;";
-	public static final String GET_REPLIES_BY_TOPIC_ID = "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_tema = ? and flgstate = 1;";
+	public static final String GET_REPLIES_BY_TOPIC_ID = "SELECT\r\n"
+			+ "r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
+			+ "FROM respuestas r\r\n"
+			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
+			+ "WHERE r.id_tema = ? AND r.flgstate = 1;";
 	public static final String GET_REPLIES_BY_USER_ID = "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_usuario = ? and flgstate = 1;";
 	
 	// Ready
 	@Override
-	public List<Replay_E> getAllReplies() {
-		List<Replay_E> listReplies = new ArrayList<Replay_E>();
+	public List<Reply_E> getAllReplies() {
+		List<Reply_E> listReplies = new ArrayList<Reply_E>();
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -33,7 +37,7 @@ public class Replay_M implements Replay_I{
 			ps = con.prepareStatement(GET_ALL_REPLIES);
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Replay_E reply = new Replay_E();
+				Reply_E reply = new Reply_E();
 				reply.setId_respuesta(rs.getInt("id_respuesta"));
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));
@@ -65,8 +69,8 @@ public class Replay_M implements Replay_I{
 
 	// Ready
 	@Override
-	public Replay_E getReplyById(int id) {
-		Replay_E reply = null;
+	public Reply_E getReplyById(int id) {
+		Reply_E reply = null;
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -76,7 +80,7 @@ public class Replay_M implements Replay_I{
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				reply = new Replay_E();
+				reply = new Reply_E();
 				reply.setId_respuesta(rs.getInt("id_respuesta"));
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));
@@ -107,7 +111,7 @@ public class Replay_M implements Replay_I{
 
 	// Ready
 	@Override
-	public boolean createReply(Replay_E reply) {
+	public boolean createReply(Reply_E reply) {
 		boolean result = false;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -141,7 +145,7 @@ public class Replay_M implements Replay_I{
 
 	// Ready
 	@Override
-	public boolean updateReply(Replay_E reply) {
+	public boolean updateReply(Reply_E reply) {
 		boolean result = false;
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -208,8 +212,8 @@ public class Replay_M implements Replay_I{
 
 	// Ready
 	@Override
-	public List<Replay_E> getRepliesByTopicId(int topicId) {
-		List<Replay_E> listReplies = new ArrayList<Replay_E>();
+	public List<Reply_E> getRepliesByTopicId(int topicId) {
+		List<Reply_E> listReplies = new ArrayList<Reply_E>();
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -219,14 +223,16 @@ public class Replay_M implements Replay_I{
 			ps.setInt(1, topicId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Replay_E reply = new Replay_E();
+				Reply_E reply = new Reply_E();
 				reply.setId_respuesta(rs.getInt("id_respuesta"));
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));
 				reply.setContenido(rs.getString("contenido"));
-				reply.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				reply.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				reply.setEs_respuesta_aceptada(rs.getBoolean("es_respuesta_aceptada"));
 				reply.setId_respuesta_padre(rs.getInt("id_respuesta_padre"));
+				reply.setNombreUsuario(rs.getString("nombreUsuario"));
+				reply.setApellidoUsuario(rs.getString("apellidoUsuario"));
 				listReplies.add(reply);
 			}
 		} catch (Exception e) {
@@ -251,8 +257,8 @@ public class Replay_M implements Replay_I{
 
 	// Ready
 	@Override
-	public List<Replay_E> getRepliesByUserId(int userId) {
-		List<Replay_E> listReplies = new ArrayList<Replay_E>();
+	public List<Reply_E> getRepliesByUserId(int userId) {
+		List<Reply_E> listReplies = new ArrayList<Reply_E>();
 		Connection con = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -262,7 +268,7 @@ public class Replay_M implements Replay_I{
 			ps.setInt(1, userId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Replay_E reply = new Replay_E();
+				Reply_E reply = new Reply_E();
 				reply.setId_respuesta(rs.getInt("id_respuesta"));
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));

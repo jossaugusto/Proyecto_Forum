@@ -11,7 +11,7 @@ public class MySQLDAOFactory extends DAOFactory{
 	}
 
 	@Override
-	public Category_I getCatogory() {
+	public Category_I getCategory() {
 		return new Category_M();
 	}
 
@@ -21,8 +21,8 @@ public class MySQLDAOFactory extends DAOFactory{
 	}
 
 	@Override
-	public Replay_I getReply() {
-		return new Replay_M();
+	public Reply_I getReply() {
+		return new Reply_M();
 	}
 
 	@Override

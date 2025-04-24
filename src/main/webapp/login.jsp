@@ -26,6 +26,9 @@
 			<p>
 				¿No tienes una cuenta? <a href="register.jsp">Regístrate aquí</a>
 			</p>
+			<p>
+				También puede: <a href="InitialConfi_S">Ingresar como invitado</a>
+			</p>
 		</div>
 	</div>
 	<div>

@@ -18,7 +18,7 @@ public class User_M implements User_I {
 	public static final String VALIDATE_USER = "SELECT * FROM usuarios WHERE email = ? AND password = ? AND flgstate = 1;";
 	public static final String UPDATE_USER = "UPDATE usuarios SET nombre = ?, apellido = ?, email = ?, password = ?, tipo_usuario = ? WHERE id = ?";
 	public static final String DELETE_USER = "UPDATE usuarios SET flgstate = 0 WHERE id = ?;";
-	public static final String GET_USER_BY_EMAIL = "SELECT nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE email = ? AND flgstate = 1;";
+	public static final String GET_USER_BY_EMAIL = "SELECT id_usuario,nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE email = ? AND flgstate = 1;";
 	public static final String GET_USER_BY_ID = "SELECT nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE id_usuario = ? AND flgstate = 1;";
 	
 	// Ready
@@ -114,6 +114,7 @@ public class User_M implements User_I {
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				user = new User_E();
+				user.setId_usuario(rs.getInt("id_usuario"));
 				user.setNombre(rs.getString("nombre"));
 				user.setApellido(rs.getString("apellido"));
 				user.setEmail(rs.getString("email"));

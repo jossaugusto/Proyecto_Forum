@@ -14,15 +14,15 @@
             </div>
             <div class="card-body">
                 <c:choose>
-                    <c:when test="${not empty categorias}">
+                    <c:when test="${not empty listCategories}">
                         <div class="row">
-                            <c:forEach var="categoria" items="${categorias}">
+                            <c:forEach var="categoria" items="${listCategories}">
                                 <div class="col-md-6 mb-3">
                                     <div class="card h-100">
                                         <div class="card-body">
                                             <h5 class="card-title">${categoria.nombre}</h5>
                                             <p class="card-text">${categoria.descripcion}</p>
-                                            <a href="${pageContext.request.contextPath}/temas?categoria=${categoria.idCategoria}" 
+                                            <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopics&category=${categoria.id_categoria}" 
                                                class="btn btn-primary">Ver temas</a>
                                         </div>
                                     </div>
@@ -40,7 +40,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Temas Recientes</h5>
-                <a href="${pageContext.request.contextPath}/temaNuevo.jsp" class="btn btn-sm btn-success">
+                <a href="${pageContext.request.contextPath}/Category_S?action=listCategories" class="btn btn-sm btn-success">
                     <i class="bi bi-plus-circle"></i> Nuevo Tema
                 </a>
             </div>
@@ -49,7 +49,7 @@
                     <c:when test="${not empty listTopics}">
                         <div class="list-group">
                             <c:forEach var="tema" items="${listTopics}">
-                                <a href="${pageContext.request.contextPath}/Topic_S?id_tema=${tema.id_tema}" 
+                                <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopic&id_tema=${tema.id_tema}" 
                                    class="list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h5 class="mb-1">${tema.titulo}</h5>

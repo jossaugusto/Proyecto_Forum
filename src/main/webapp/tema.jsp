@@ -10,41 +10,41 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h3>${tema.titulo}</h3>
+            <h3>${topic.titulo}</h3>
         </div>
         <div class="card-body">
             <p class="text-muted">
-                Publicado el: <fmt:formatDate value="${tema.fecha_publicacion}" pattern="dd/MM/yyyy HH:mm" /><br>
-                Por: ${tema.nombreUsuario} ${tema.apellidoUsuario} |
-                Categoría: ${tema.nombreCategoria}
+                Publicado el: <fmt:formatDate value="${topic.fecha_publicacion}" pattern="dd/MM/yyyy HH:mm" /><br>
+                Por: ${topic.nombreUsuario} ${topic.apellidoUsuario} |
+                Categoría: ${topic.nombreCategoria}
             </p>
             <hr>
-            <p>${tema.contenido}</p>
+            <p>${topic.contenido}</p>
         </div>
         <div class="card-footer text-muted">
-            Vistas: ${tema.vistas}
+            Vistas: ${topic.vistas}
         </div>
     </div>
 
 	<!-- Respuestas al tema -->
 	<div class="mt-4">
-	    <h4>Respuestas (${fn:length(respuestas)})</h4>
+	    <h4>Respuestas (${fn:length(listReplies)})</h4>
 	    
-	    <c:if test="${not empty respuestas}">
+	    <c:if test="${not empty listReplies}">
 	        <ul class="list-group">
-	            <c:forEach var="respuesta" items="${respuestas}">
+	            <c:forEach var="respuesta" items="${listReplies}">
 	                <li class="list-group-item">
 	                    <p>${respuesta.contenido}</p>
 	                    <small class="text-muted">
 	                        Por: ${respuesta.nombreUsuario} ${respuesta.apellidoUsuario} | 
-	                        <fmt:formatDate value="${respuesta.fechaPublicacion}" pattern="dd/MM/yyyy HH:mm" />
+	                        <fmt:formatDate value="${respuesta.fecha_publicacion}" pattern="dd/MM/yyyy HH:mm" />
 	                    </small>
 	                </li>
 	            </c:forEach>
 	        </ul>
 	    </c:if>
 	    
-	    <c:if test="${empty respuestas}">
+	    <c:if test="${empty listReplies}">
 	        <p class="text-muted">No hay respuestas aún. ¡Sé el primero en responder!</p>
 	    </c:if>
 	</div>
@@ -54,18 +54,21 @@
 	    <c:choose>
 	        <c:when test="${not empty sessionScope.currentUser}">
 	            <h5>Agregar una respuesta</h5>
-	            <form action="${pageContext.request.contextPath}/respuestas" method="post">
-	                <input type="hidden" name="id_tema" value="${tema.id_tema}">
+	            <form action="${pageContext.request.contextPath}/Reply_S" method="post">
+	                <input type="hidden" name="id_tema" value="${topic.id_tema}">
 	                <div class="mb-3">
 	                    <textarea name="contenido" class="form-control" rows="4" required placeholder="Escribe tu respuesta aquí..."></textarea>
 	                </div>
-	                <button type="submit" class="btn btn-primary">Publicar respuesta</button>
+	                <button type="submit" name="action" value="newReply" class="btn btn-primary">Publicar respuesta</button>
 	            </form>
 	        </c:when>
 	        <c:otherwise>
 	            <p class="text-muted">Debes <a href="${pageContext.request.contextPath}/login.jsp">iniciar sesión</a> para responder.</p>
 	        </c:otherwise>
 	    </c:choose>
+    	<div>
+			<span style="color: red;">${requestScope.message}</span>
+	    </div>
 	</div>
 
 </div>

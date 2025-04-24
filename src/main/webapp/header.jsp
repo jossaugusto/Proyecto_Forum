@@ -22,7 +22,7 @@
                         <a class="nav-link" href="${pageContext.request.contextPath}/InitialConfi_S">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/categorias">Categorías</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/Category_S?action=viewCategories">Categorías</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">

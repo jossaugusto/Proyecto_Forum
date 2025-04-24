@@ -22,6 +22,4 @@ public interface Category_I {
 	// Delete category by ID
 	boolean deleteCategory(int id);
 	
-	// Get categories by user ID
-	List<Category_E> getCategoriesByUserId(int userId);
 }
