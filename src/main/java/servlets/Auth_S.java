@@ -45,7 +45,7 @@ public class Auth_S extends HttpServlet {
 		if (result) {
 			User_E user = userDAO.getUserByEmail(email);
 			HttpSession session = request.getSession();
-			session.setAttribute("user", user);
+			session.setAttribute("currentUser", user);
 			request.getRequestDispatcher("Admin_S").forward(request, response);
 			
 		} else {
@@ -61,21 +61,21 @@ public class Auth_S extends HttpServlet {
 		String lastname = request.getParameter("lastname");
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-		String tipo_usario = request.getParameter("tipo_usuario");
+		String tipo_usuario = request.getParameter("tipo_usuario");
 		
 		User_E user = new User_E();
 		user.setNombre(name);
 		user.setApellido(lastname);
 		user.setEmail(email);
 		user.setPassword(password);
-		user.setTipo_usuario(tipo_usario);
+		user.setTipo_usuario(tipo_usuario);
 		
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
 		User_I userDAO = daoFactory.getUser();
 		boolean result = userDAO.createUser(user);
 		if (result) {;
 			HttpSession session = request.getSession();
-			session.setAttribute("user", user);
+			session.setAttribute("currentUser", user);
 			request.getRequestDispatcher("Admin_S").forward(request, response);
 		} else {
 			System.out.println("Error creating user");

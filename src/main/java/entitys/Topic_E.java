@@ -11,7 +11,29 @@ public class Topic_E {
     private Date fecha_publicacion;
     private String estado;
     private int vistas;
+    private String nombreUsuario;
+    private String apellidoUsuario;
+    private String nombreCategoria;
     
+    
+	public String getNombreUsuario() {
+		return nombreUsuario;
+	}
+	public void setNombreUsuario(String nombreUsuario) {
+		this.nombreUsuario = nombreUsuario;
+	}
+	public String getApellidoUsuario() {
+		return apellidoUsuario;
+	}
+	public void setApellidoUsuario(String apellidoUsuario) {
+		this.apellidoUsuario = apellidoUsuario;
+	}
+	public String getNombreCategoria() {
+		return nombreCategoria;
+	}
+	public void setNombreCategoria(String nombreCategoria) {
+		this.nombreCategoria = nombreCategoria;
+	}
 	public int getId_tema() {
 		return id_tema;
 	}

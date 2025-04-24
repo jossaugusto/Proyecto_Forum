@@ -1,9 +1,9 @@
 package models;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +13,18 @@ import interfaces.Topic_I;
 
 public class Topic_M implements Topic_I{
 	
-	public static final String GET_ALL_TOPICS = "SELECT * FROM temas WHERE flgstate = 1;";
-	public static final String GET_TOPIC_BY_ID= "SELECT * FROM temas WHERE id_tema = ? and flgstate = 1;";
-	public static final String CREATE_TOPIC = "INSERT INTO temas (titulo, contenido, id_usuario, id_categoria, fecha_publicacion) VALUES (?,?,?,?,?);";
+	public static final String GET_ALL_TOPICS = "SELECT  t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
+			+ "FROM temas t\r\n"
+			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
+			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
+			+ "WHERE t.flgstate = 1\r\n"
+			+ "ORDER BY id_tema DESC;";
+	public static final String GET_TOPIC_BY_ID= "SELECT  t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
+			+ "FROM temas t\r\n"
+			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
+			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
+			+ "WHERE t.id_tema = ? AND t.flgstate = 1;";
+	public static final String CREATE_TOPIC = "INSERT INTO temas (titulo, contenido, id_usuario, id_categoria) VALUES (?,?,?,?);";
 	public static final String UPDATE_TOPIC = "UPDATE temas SET titulo = ?, contenido = ?, id_usuario = ?, id_categoria = ?, fecha_publicacion = ? WHERE id_tema = ?;";
 	public static final String DELETE_USER = "UPDATE temas SET flgstate = 0 WHERE id_tema = ?;";
 	public static final String GET_TOPICS_BY_CATEGORY_ID = "SELECT * FROM temas WHERE id_categoria = ? and flgstate = 1;";
@@ -39,9 +48,12 @@ public class Topic_M implements Topic_I{
 				topic.setContenido(rs.getString("contenido"));
 				topic.setId_usuario(rs.getInt("id_usuario"));
 				topic.setId_categoria(rs.getInt("id_categoria"));
-				topic.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				topic.setEstado(rs.getString("estado"));
 				topic.setVistas(rs.getInt("vistas"));
+				topic.setNombreUsuario(rs.getString("nombreUsuario"));
+				topic.setApellidoUsuario(rs.getString("apellidoUsuario"));
+				topic.setNombreCategoria(rs.getString("nombreCategoria"));
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
@@ -85,9 +97,12 @@ public class Topic_M implements Topic_I{
 				topic.setContenido(rs.getString("contenido"));
 				topic.setId_usuario(rs.getInt("id_usuario"));
 				topic.setId_categoria(rs.getInt("id_categoria"));
-				topic.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				topic.setEstado(rs.getString("estado"));
 				topic.setVistas(rs.getInt("vistas"));
+				topic.setNombreUsuario(rs.getString("nombreUsuario"));
+				topic.setApellidoUsuario(rs.getString("apellidoUsuario"));
+				topic.setNombreCategoria(rs.getString("nombreCategoria"));
 			}
 		} catch (Exception e) {
 			System.out.println("Error getting topic>>>" + e.getMessage());
@@ -118,7 +133,6 @@ public class Topic_M implements Topic_I{
 			ps.setString(2, topic.getContenido());
 			ps.setInt(3, topic.getId_usuario());
 			ps.setInt(4, topic.getId_categoria());
-			ps.setDate(5, new Date(topic.getFecha_publicacion().getTime()));
 
 			int value = ps.executeUpdate();
 			if (value > 0) {
@@ -154,7 +168,7 @@ public class Topic_M implements Topic_I{
 			ps.setString(2, topic.getContenido());
 			ps.setInt(3, topic.getId_usuario());
 			ps.setInt(4, topic.getId_categoria());
-			ps.setDate(5, new Date(topic.getFecha_publicacion().getTime()));
+			ps.setTimestamp(5, new Timestamp(topic.getFecha_publicacion().getTime()));
 			ps.setInt(6, topic.getId_tema());
 
 			int value = ps.executeUpdate();
@@ -221,7 +235,7 @@ public class Topic_M implements Topic_I{
 				topic.setContenido(rs.getString("contenido"));
 				topic.setId_usuario(rs.getInt("id_usuario"));
 				topic.setId_categoria(rs.getInt("id_categoria"));
-				topic.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				topic.setEstado(rs.getString("estado"));
 				topic.setVistas(rs.getInt("vistas"));
 				listTopics.add(topic);
@@ -265,7 +279,7 @@ public class Topic_M implements Topic_I{
 				topic.setContenido(rs.getString("contenido"));
 				topic.setId_usuario(rs.getInt("id_usuario"));
 				topic.setId_categoria(rs.getInt("id_categoria"));
-				topic.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				topic.setEstado(rs.getString("estado"));
 				topic.setVistas(rs.getInt("vistas"));
 				listTopics.add(topic);
