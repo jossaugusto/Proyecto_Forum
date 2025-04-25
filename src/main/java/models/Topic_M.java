@@ -32,7 +32,12 @@ public class Topic_M implements Topic_I{
 			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
 			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
 			+ "WHERE t.id_categoria = ? AND t.flgstate = 1;";
-	public static final String GET_TOPICS_BY_USER_ID = "SELECT * FROM temas WHERE id_usuario = ? and flgstate = 1;";
+	public static final String GET_TOPICS_BY_USER_ID = "SELECT t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, c.nombre as nombreCategoria\r\n"
+			+ "FROM temas t\r\n"
+			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
+			+ "WHERE t.id_usuario = ? and t.flgstate = 1;";
+	
+	
 	
 	// Ready
 	@Override
@@ -296,6 +301,7 @@ public class Topic_M implements Topic_I{
 				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				topic.setEstado(rs.getString("estado"));
 				topic.setVistas(rs.getInt("vistas"));
+				topic.setNombreCategoria(rs.getString("nombreCategoria"));
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
@@ -318,4 +324,31 @@ public class Topic_M implements Topic_I{
 		return listTopics;
 	}
 
+	public void updateTopicViews(int id_tema) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement("UPDATE temas SET vistas = vistas + 1 WHERE id_tema = ?;");
+			ps.setInt(1, id_tema);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			System.out.println("Error updating views>>> " + e.getMessage());
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+				System.out.println("Error closing resources>>> " + e.getMessage());
+			}
+		}
+	}
+
+	
+	
+	
 }

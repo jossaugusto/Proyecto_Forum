@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <jsp:include page="header.jsp">
     <jsp:param name="titulo" value="Index" />
@@ -99,19 +100,36 @@
         
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Usuarios Más Activos</h5>
+                <h5 class="mb-0">Mis temas:</h5>
             </div>
             <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <c:forEach var="usuario" items="${usuariosActivos}">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${usuario.nombre} ${usuario.apellido}
-                            <span class="badge bg-success rounded-pill">${usuario.puntos}</span>
-                        </li>
-                    </c:forEach>
-                </ul>
+                <c:choose>
+                    <c:when test="${not empty listTopicsByUser}">
+                        <div class="list-group">
+                            <c:forEach var="tema" items="${listTopicsByUser}">
+                                <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopic&id_tema=${tema.id_tema}" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">${tema.titulo}</h5>
+                                        <small><fmt:formatDate value="${tema.fecha_publicacion}" pattern="dd/MM/yyyy" /></small>
+                                    </div>
+                                    <p class="mb-1">${tema.contenido}</p>
+                                    <small>
+                                        Categoría: ${tema.nombreCategoria} |
+										<i class="bi bi-chat-dots"></i> (${tema.vistas}) vistas |
+										<i class="bi bi-chat-dots"></i> (${tema.cantidadRespuestas}) respuestas
+                                    </small>
+                                </a>
+                            </c:forEach>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <p>No tienes temas creados.</p>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
+        
     </div>
 </div>
 

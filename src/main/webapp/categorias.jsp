@@ -23,7 +23,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${categoria.nombre}</h5>
                                 <p class="card-text">${categoria.descripcion}</p>
-                                <a href="${pageContext.request.contextPath}/temas?categoria=${categoria.id_categoria}" class="btn btn-primary">
+                                <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopics&category=${categoria.id_categoria}" class="btn btn-primary">
                                     Ver Temas
                                 </a>
                             </div>

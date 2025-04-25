@@ -54,28 +54,30 @@ public class Topic_S extends HttpServlet {
 	}
 
 	private void viewTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String message = request.getParameter("message");
 		String id_tema = request.getParameter("id_tema");
 		
 		if (id_tema != null) {
+			String message = request.getParameter("message");
+			
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
 			Topic_I topicDAO = daoFactory.getTopic();
+			
+			topicDAO.updateTopicViews(Integer.parseInt(id_tema));			
 			Topic_E topic = topicDAO.getTopicById(Integer.parseInt(id_tema));
 			
 			Reply_I replayDAO = daoFactory.getReply();
-			List<Reply_E> listReplies = replayDAO.getRepliesByTopicId(Integer.parseInt(id_tema));
+			List<Reply_E> listRepliesByTopicId = replayDAO.getRepliesByTopicId(Integer.parseInt(id_tema));
 			
 			if (message != null) {
 				request.setAttribute("message", message);
 			}
 			request.setAttribute("topic", topic);
-			request.setAttribute("listReplies", listReplies);
+			request.setAttribute("listRepliesByTopicId", listRepliesByTopicId);
 			request.getRequestDispatcher("tema.jsp").forward(request, response);
 			
 		} else {
 			System.out.println("No se ha encontrado el id del tema");
 		}
-
 	}
 
 	private void newTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

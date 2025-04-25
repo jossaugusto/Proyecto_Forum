@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,7 +9,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import dao.DAOFactory;
+import entitys.Topic_E;
 import entitys.User_E;
+import interfaces.Reply_I;
+import interfaces.Topic_I;
 
 @WebServlet("/Admin_S")
 public class Admin_S extends HttpServlet {
@@ -24,7 +30,21 @@ public class Admin_S extends HttpServlet {
 		User_E user = (User_E) session.getAttribute("currentUser");
 
 		if (user != null) {
+			
+			DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+			Topic_I topicDAO = daoFactory.getTopic();
+			Reply_I replyDAO = daoFactory.getReply();
+			
+			List<Topic_E> listTopicsByUser = topicDAO.getTopicsByUserId(user.getId_usuario());
+			
+			for (Topic_E tema : listTopicsByUser) {
+			    int cantidad = replyDAO.getQuantityReplyByTopicId(tema.getId_tema());
+			    tema.setCantidadRespuestas(cantidad);
+			}
+			
+			request.setAttribute("listTopicsByUser", listTopicsByUser);
 			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
+			
 //			String userType = user.getTipo_usuario();
 //			switch (userType) {
 //			case "admin":

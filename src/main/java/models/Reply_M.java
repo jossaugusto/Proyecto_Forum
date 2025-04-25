@@ -24,6 +24,7 @@ public class Reply_M implements Reply_I{
 			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
 			+ "WHERE r.id_tema = ? AND r.flgstate = 1;";
 	public static final String GET_REPLIES_BY_USER_ID = "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_usuario = ? and flgstate = 1;";
+	public static final String GET_QUANTITY_REPLY_BY_TOPIC_ID = "SELECT COUNT(*) as cantidad FROM respuestas WHERE id_tema = ?;";
 	
 	// Ready
 	@Override
@@ -297,5 +298,40 @@ public class Reply_M implements Reply_I{
 		}
 		return listReplies;
 	}
+	
+	@Override
+	public int getQuantityReplyByTopicId(int id_tema) {
+		int cantidad = 0;
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(GET_QUANTITY_REPLY_BY_TOPIC_ID);
+			ps.setInt(1, id_tema);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				cantidad = rs.getInt("cantidad");
+			}
+		} catch (Exception e) {
+			System.out.println("Error getting quantity of replies by topic ID>>> " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+				System.out.println("Error closing resources>>> " + e.getMessage());
+			}
+		}
+		return cantidad;
+	}
+	
 
 }

@@ -39,12 +39,15 @@ public class Auth_S extends HttpServlet {
 		String password = request.getParameter("password");
 		
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+		
 		User_I userDAO = daoFactory.getUser();
 		boolean result = userDAO.validateUser(email, password);
 		
 		if (result) {
-			User_E user = userDAO.getUserByEmail(email);
 			HttpSession session = request.getSession();
+			
+			User_E user = userDAO.getUserByEmail(email);
+			
 			session.setAttribute("currentUser", user);
 			request.getRequestDispatcher("Admin_S").forward(request, response);
 			

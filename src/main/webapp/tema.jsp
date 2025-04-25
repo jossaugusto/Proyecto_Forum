@@ -28,11 +28,11 @@
 
 	<!-- Respuestas al tema -->
 	<div class="mt-4">
-	    <h4>Respuestas (${fn:length(listReplies)})</h4>
+	    <h4>Respuestas (${fn:length(listRepliesByTopicId)})</h4>
 	    
-	    <c:if test="${not empty listReplies}">
+	    <c:if test="${not empty listRepliesByTopicId}">
 	        <ul class="list-group">
-	            <c:forEach var="respuesta" items="${listReplies}">
+	            <c:forEach var="respuesta" items="${listRepliesByTopicId}">
 	                <li class="list-group-item">
 	                    <p>${respuesta.contenido}</p>
 	                    <small class="text-muted">
@@ -44,7 +44,7 @@
 	        </ul>
 	    </c:if>
 	    
-	    <c:if test="${empty listReplies}">
+	    <c:if test="${empty listRepliesByTopicId}">
 	        <p class="text-muted">No hay respuestas aún. ¡Sé el primero en responder!</p>
 	    </c:if>
 	</div>

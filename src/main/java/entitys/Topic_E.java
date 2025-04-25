@@ -14,8 +14,14 @@ public class Topic_E {
     private String nombreUsuario;
     private String apellidoUsuario;
     private String nombreCategoria;
-    
-    
+    private int cantidadRespuestas;
+
+	public int getCantidadRespuestas() {
+		return cantidadRespuestas;
+	}
+	public void setCantidadRespuestas(int cantidadRespuestas) {
+		this.cantidadRespuestas = cantidadRespuestas;
+	}
 	public String getNombreUsuario() {
 		return nombreUsuario;
 	}

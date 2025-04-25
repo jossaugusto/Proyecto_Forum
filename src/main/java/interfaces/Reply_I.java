@@ -27,4 +27,6 @@ public interface Reply_I {
 	
 	// Get replies by user ID
 	List<Reply_E> getRepliesByUserId(int userId);
+	
+	int getQuantityReplyByTopicId(int id_tema);
 }
