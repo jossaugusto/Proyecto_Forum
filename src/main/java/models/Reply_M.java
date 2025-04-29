@@ -77,6 +77,7 @@ public class Reply_M implements Reply_I{
 				System.out.println("Error closing resources>>> " + e.getMessage());
 			}
 		}
+		
 		return listReplies;
 	}
 

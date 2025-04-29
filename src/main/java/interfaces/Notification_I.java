@@ -16,15 +16,14 @@ public interface Notification_I {
 	// Create a new notification
 	boolean createNotification(int userId, String type, String content);
 	
-	// Update notification information
-	boolean updateNotification(Notification_E notification);
-	
 	// Delete notification by ID
 	boolean deleteNotification(int id);
 	
 	// Get notifications by user ID
-	List<Notification_E> getNotificationsByUserId(int userId);
+	List<Notification_E> getNotificationsByUserId(int userId,boolean read);
 	
 	// Mark notification as read
-	boolean markAsRead(int notificationId);
+	void markAsRead(int notificationId);
+	
+	int countUnreadNotifications(int userId);
 }

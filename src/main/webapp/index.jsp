@@ -75,27 +75,52 @@
     </div>
     
     <div class="col-md-4">
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header">
-                <h5 class="mb-0">Estadísticas</h5>
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Usuarios registrados
-                        <span class="badge bg-primary rounded-pill">${estadisticas.cantidadUsuarios}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Temas
-                        <span class="badge bg-primary rounded-pill">${estadisticas.cantidadTemas}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Respuestas
-                        <span class="badge bg-primary rounded-pill">${estadisticas.cantidadRespuestas}</span>
-                    </li>
-                </ul>
-            </div>
+    
+	<!-- Notificaciones -->
+	<div class="card mb-4 shadow-sm">
+	    <div class="card-header">
+	        <h5 class="mb-0">Notificaciones:</h5>
+	    </div>
+	    <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationsByUserId&showUnread=false" 
+               class="btn btn-outline-primary ${empty param.showUnread ? 'active' : ''}">
+                Todas
+            </a>
+            <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationsByUserId&showUnread=true" 
+               class="btn btn-outline-primary ${not empty param.showUnread ? 'active' : ''}">
+                No leídas 
+                <span class="badge bg-danger">${unreadCount}</span>
+            </a>
         </div>
+    </div>
+
+    <c:choose>
+        <c:when test="${not empty listNotifications}">
+            <div class="list-group">
+                <c:forEach var="notificacion" items="${listNotifications}">
+                    <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationById&id_notificacion=${notificacion.id_notificacion}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">${notificacion.tipo_notificacion}</div>
+                            <span>${notificacion.contenido}</span>
+                        </div>
+                        <small>
+                            <fmt:formatDate value="${notificacion.fecha}" pattern="dd/MM/yyyy HH:mm" />
+                        </small>
+                    </a>
+                </c:forEach>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <p>No tienes notificaciones.</p>
+        </c:otherwise>
+    </c:choose>
+</div>
+
+	</div>
+
         
         <div class="card shadow-sm">
             <div class="card-header">
