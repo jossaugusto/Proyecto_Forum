@@ -10,6 +10,12 @@ public interface User_I {
 	// List all users
 	List<User_E> getAllUsers();
 	
+	List<User_E> getAllDeletedUsers();
+	
+	List<User_E> getAllUsersBySearch(String keyword);
+	
+	List<User_E> getAllDeletedUsersBySearch(String keyword);
+	
 	// Get user by ID
 	User_E getUserById(int id);
 	
@@ -20,11 +26,17 @@ public interface User_I {
 	boolean createUser(User_E user);
 	
 	// Update user information
-	boolean updateUser(User_E user);
+	boolean updateUser(User_E user, boolean updatePassword);
 	
 	// Delete user by ID
 	boolean deleteUser(int id);
 	
+	// Restore user by ID
+	boolean restoreUser(int id);
+	
 	// Validate user credentials
 	boolean validateUser(String email, String password);
+	
+	// Count quantity of users
+	int countUsers();
 }

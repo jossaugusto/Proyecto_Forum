@@ -8,46 +8,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foro Académico - ${param.titulo}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+   	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="${pageContext.request.contextPath}/InitialConfi_S">Foro Académico</a>
+            <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/InitialConfi_S">
+                <i class="bi bi-chat-left-text-fill"></i> Foro Académico
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/InitialConfi_S">Inicio</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/InitialConfi_S">
+                            <i class="bi bi-house-door-fill"></i> Inicio
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/Category_S?action=viewCategories">Categorías</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/Category_S?action=viewCategories">
+                            <i class="bi bi-folder2-open"></i> Categorías
+                        </a>
                     </li>
                 </ul>
-                <ul class="navbar-nav">
+
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <c:choose>
                         <c:when test="${not empty sessionScope.currentUser}">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    ${sessionScope.currentUser.nombre}
+                                    <i class="bi bi-person-circle"></i> ${sessionScope.currentUser.nombre}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/perfil">Mi Perfil</a></li>
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/perfil.jsp">
+                                        <i class="bi bi-person-lines-fill"></i> Mi Perfil</a></li>
                                     <c:if test="${sessionScope.currentUser.tipo_usuario == 'admin'}">
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/admin.jsp">Administración</a></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Admin_S?action=adminPanel">
+                                            <i class="bi bi-shield-lock-fill"></i> Administración</a></li>
                                     </c:if>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Logout_S">Cerrar Sesión</a></li>
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Logout_S">
+                                        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
                                 </ul>
                             </li>
                         </c:when>
                         <c:otherwise>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/login.jsp">Iniciar Sesión</a>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/login.jsp">
+                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/register.jsp">Registrarse</a>
+                                <a class="nav-link" href="${pageContext.request.contextPath}/register.jsp">
+                                    <i class="bi bi-pencil-square"></i> Registrarse
+                                </a>
                             </li>
                         </c:otherwise>
                     </c:choose>
@@ -56,27 +75,18 @@
         </div>
     </nav>
 
-<%-- 
-	Por revisar:
-	
-	<div class="container mt-4">
-		<!-- Mostrar mensajes de error o éxito -->
-		<c:if test="${not empty requestScope.error}">
-			<div class="alert alert-danger alert-dismissible fade show"
-				role="alert">
-				${requestScope.error}
-				<button type="button" class="btn-close" data-bs-dismiss="alert"
-					aria-label="Close"></button>
-			</div>
-		</c:if>
+    <div class="container mt-3">
+        <c:if test="${not empty requestScope.error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>${requestScope.error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
 
-		<c:if test="${not empty requestScope.exito}">
-			<div class="alert alert-success alert-dismissible fade show"
-				role="alert">
-				${requestScope.exito}
-				<button type="button" class="btn-close" data-bs-dismiss="alert"
-					aria-label="Close"></button>
-			</div>
-		</c:if>
-	</div> 
---%>
+        <c:if test="${not empty requestScope.exito}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>${requestScope.exito}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+    </div>

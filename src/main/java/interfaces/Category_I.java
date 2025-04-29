@@ -10,6 +10,12 @@ public interface Category_I {
 	// List all categories
 	List<Category_E> getAllCategories();
 	
+	List<Category_E> getAllDeletedCategories();
+	
+	List<Category_E> getAllCategoriesBySearch(String keyword);
+	
+	List<Category_E> getAllDeletedCategoriesBySearch(String keyword);
+	
 	// Get category by ID
 	Category_E getCategoryById(int id);
 	
@@ -21,5 +27,8 @@ public interface Category_I {
 	
 	// Delete category by ID
 	boolean deleteCategory(int id);
+
+	boolean restoreCategory(int id);
 	
+	int countCategories();
 }

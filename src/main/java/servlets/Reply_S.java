@@ -30,7 +30,6 @@ public class Reply_S extends HttpServlet {
 			case "newReply":
 				newReply(request, response);
 				break;
-
 			default:
 				System.out.println("Accion no reconocida");
 		}
@@ -41,18 +40,34 @@ public class Reply_S extends HttpServlet {
 		HttpSession session = request.getSession();
 		User_E user = (User_E) session.getAttribute("currentUser");
 		
+		boolean value = false;
+		int id_usuario = user.getId_usuario();
 		String id_tema = request.getParameter("id_tema");
 		String contenido = request.getParameter("contenido");
-		int id_usuario = user.getId_usuario();
-		
-		Reply_E reply = new Reply_E();
-		reply.setId_tema(Integer.parseInt(id_tema));
-		reply.setId_usuario(id_usuario);
-		reply.setContenido(contenido);
+		String id_respuesta_padre = request.getParameter("id_respuesta_padre");
 		
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
 		Reply_I replyDAO = daoFactory.getReply();
-		boolean value = replyDAO.createReply(reply);
+		
+		if (id_respuesta_padre != null && !id_respuesta_padre.isEmpty()) {
+			// Es una sub-respuesta
+			Reply_E reply = new Reply_E();
+			reply.setId_tema(Integer.parseInt(id_tema));
+			reply.setId_usuario(id_usuario);
+			reply.setContenido(contenido);
+			reply.setId_respuesta_padre(Integer.parseInt(id_respuesta_padre));
+
+			value = replyDAO.createSubReply(reply);
+
+		} else {
+		    // Es una respuesta directa al tema
+			Reply_E reply = new Reply_E();
+			reply.setId_tema(Integer.parseInt(id_tema));
+			reply.setId_usuario(id_usuario);
+			reply.setContenido(contenido);
+			
+			value = replyDAO.createReply(reply);
+		}
 		
 		if (value) {
 			response.sendRedirect("Topic_S?action=viewTopic&id_tema=" + id_tema);

@@ -2,7 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Tema" />
+    <jsp:param name="titulo" value="Crear Tema" />
 </jsp:include>
 
 <div class="container mt-5">
@@ -10,17 +10,21 @@
         <c:when test="${not empty sessionScope.currentUser}">
             <h2>Crear Nuevo Tema</h2>
 
-            <form action="${pageContext.request.contextPath}/Topic_S" method="post">
+            <form action="${pageContext.request.contextPath}/Topic_S" method="post" onsubmit="return validarFormulario()">
                 <input type="hidden" name="id_usuario" value="${sessionScope.currentUser.id_usuario}" />
+                
+
                 <div class="mb-3">
                     <label for="titulo" class="form-label">Título del Tema</label>
                     <input type="text" class="form-control" id="titulo" name="titulo" required placeholder="Escribe el título del tema">
                 </div>
 
+
                 <div class="mb-3">
                     <label for="contenido" class="form-label">Contenido</label>
                     <textarea class="form-control" id="contenido" name="contenido" rows="6" required placeholder="Desarrolla el contenido del tema aquí..."></textarea>
                 </div>
+
 
                 <div class="mb-3">
                     <label for="id_categoria" class="form-label">Categoría</label>
@@ -32,9 +36,19 @@
                     </select>
                 </div>
 
+
                 <button type="submit" class="btn btn-success" name="action" value="newTopic">Publicar Tema</button>
             </form>
+
+
+            <c:if test="${not empty requestScope.message}">
+                <div class="alert alert-danger mt-3">
+                    ${requestScope.message}
+                </div>
+            </c:if>
+
         </c:when>
+
 
         <c:otherwise>
             <div class="alert alert-warning" role="alert">
@@ -42,10 +56,7 @@
             </div>
         </c:otherwise>
     </c:choose>
-    <div>
-		<span style="color: red;">${requestScope.message}</span>
-	</div>
-</div>
 
+</div>
 
 <jsp:include page="footer.jsp" />

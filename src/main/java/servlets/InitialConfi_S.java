@@ -15,6 +15,7 @@ import entitys.Category_E;
 import entitys.Topic_E;
 import entitys.User_E;
 import interfaces.Category_I;
+import interfaces.Reply_I;
 import interfaces.Topic_I;
 
 @WebServlet("/InitialConfi_S")
@@ -33,19 +34,27 @@ public class InitialConfi_S extends HttpServlet {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
 		Topic_I topicDAO = daoFactory.getTopic();
 		Category_I categoryDAO = daoFactory.getCategory();
+		Reply_I replyDAO = daoFactory.getReply();
 		
 		List<Topic_E> listTopics = topicDAO.getAllTopics();
 		List<Category_E> listCategories = categoryDAO.getAllCategories();
 		
 		request.setAttribute("listTopics", listTopics);
+		for (Topic_E tema : listTopics) {
+		    int cantidad = replyDAO.getQuantityReplyByTopicId(tema.getId_tema());
+		    tema.setCantidadRespuestas(cantidad);
+		}
 		request.setAttribute("listCategories", listCategories);
 		
 		if (currentUser != null) {
-		    // Datos exclusivos para usuarios registrados
 		    List<Topic_E> listTopicsByUser = topicDAO.getTopicsByUserId(currentUser.getId_usuario());
+		    
+			for (Topic_E tema : listTopicsByUser) {
+			    int cantidad = replyDAO.getQuantityReplyByTopicId(tema.getId_tema());
+			    tema.setCantidadRespuestas(cantidad);
+			}
+			
 		    request.setAttribute("listTopicsByUser", listTopicsByUser);
-
-		    // Agrega también otros datos como estadísticas o temas vistos si los necesitas
 		}
 
 		

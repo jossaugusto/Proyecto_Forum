@@ -3,13 +3,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Index" />
+    <jsp:param name="titulo" value="Home" />
 </jsp:include>
 <div class="row">
     <div class="col-md-8">
         <h1 class="mb-4">Bienvenido al Foro Académico</h1>
         
-        <div class="card mb-4">
+        <div class="card mb-4 shadow-sm">
             <div class="card-header">
                 <h5 class="mb-0">Categorías de Discusión</h5>
             </div>
@@ -19,7 +19,7 @@
                         <div class="row">
                             <c:forEach var="categoria" items="${listCategories}">
                                 <div class="col-md-6 mb-3">
-                                    <div class="card h-100">
+                                    <div class="card h-100 shadow-sm">
                                         <div class="card-body">
                                             <h5 class="card-title">${categoria.nombre}</h5>
                                             <p class="card-text">${categoria.descripcion}</p>
@@ -38,7 +38,7 @@
             </div>
         </div>
         
-        <div class="card">
+        <div class="card mb-4 shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Temas Recientes</h5>
                 <a href="${pageContext.request.contextPath}/Category_S?action=listCategories" class="btn btn-sm btn-success">
@@ -60,7 +60,7 @@
                                     <small>
                                         Por: ${tema.nombreUsuario} ${tema.apellidoUsuario} |
                                         Categoría: ${tema.nombreCategoria} |
-<%--                                         <i class="bi bi-chat-dots"></i> ${tema.cantidadRespuestas} respuestas --%>
+                                        <i class="bi bi-chat-dots"></i> ${tema.cantidadRespuestas} respuestas
                                     </small>
                                 </a>
                             </c:forEach>
@@ -75,8 +75,7 @@
     </div>
     
     <div class="col-md-4">
-        <!-- Sidebar con estadísticas, usuarios activos, etc. -->
-        <div class="card mb-4">
+        <div class="card mb-4 shadow-sm">
             <div class="card-header">
                 <h5 class="mb-0">Estadísticas</h5>
             </div>
@@ -98,7 +97,7 @@
             </div>
         </div>
         
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header">
                 <h5 class="mb-0">Mis temas:</h5>
             </div>
@@ -116,8 +115,8 @@
                                     <p class="mb-1">${tema.contenido}</p>
                                     <small>
                                         Categoría: ${tema.nombreCategoria} |
-										<i class="bi bi-chat-dots"></i> (${tema.vistas}) vistas |
-										<i class="bi bi-chat-dots"></i> (${tema.cantidadRespuestas}) respuestas
+                                       <i class="bi bi-eye"></i> (${tema.vistas}) vistas
+                                        <i class="bi bi-chat-dots"></i> (${tema.cantidadRespuestas}) respuestas
                                     </small>
                                 </a>
                             </c:forEach>

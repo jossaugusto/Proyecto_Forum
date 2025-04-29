@@ -16,6 +16,9 @@ public interface Reply_I {
 	// Create a new reply
 	boolean createReply(Reply_E reply);
 	
+	// Create a new sub-reply
+	boolean createSubReply(Reply_E reply);
+	
 	// Update reply information
 	boolean updateReply(Reply_E reply);
 	
@@ -25,8 +28,18 @@ public interface Reply_I {
 	// Get replies by topic ID
 	List<Reply_E> getRepliesByTopicId(int topicId);
 	
+	// Get replies by topic ID and Parent ID is not null
+	//List<Reply_E> getRepliesByTopicIdAndParentIdNotNull(int topicId);
+	
 	// Get replies by user ID
 	List<Reply_E> getRepliesByUserId(int userId);
 	
+	// Quantity of replies by topic ID
 	int getQuantityReplyByTopicId(int id_tema);
+	
+	// Get replies by parent reply ID
+	List<Reply_E> getRepliesByParentId(int parentId);
+	
+	// Get the number of replies
+	int countReplies();
 }

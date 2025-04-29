@@ -1,7 +1,9 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -68,11 +70,27 @@ public class Topic_S extends HttpServlet {
 			Reply_I replayDAO = daoFactory.getReply();
 			List<Reply_E> listRepliesByTopicId = replayDAO.getRepliesByTopicId(Integer.parseInt(id_tema));
 			
+			//List<Reply_E> listRepliesParentIDNotNull = replayDAO.getRepliesByTopicIdAndParentIdNotNull(Integer.parseInt(id_tema));
+			Map<Integer, List<Reply_E>> repliesByParent = new HashMap<>();
+
+			for (Reply_E reply : listRepliesByTopicId) {
+			    int parentId = reply.getId_respuesta_padre();
+			    
+			    if (parentId > 0) {
+			        List<Reply_E> childReplies = replayDAO.getRepliesByParentId(parentId);
+			        if (!childReplies.isEmpty()) {
+			            repliesByParent.put(parentId, childReplies);
+			        }
+			    }
+			}			
+			
 			if (message != null) {
 				request.setAttribute("message", message);
 			}
+			
 			request.setAttribute("topic", topic);
 			request.setAttribute("listRepliesByTopicId", listRepliesByTopicId);
+			request.setAttribute("repliesByParent", repliesByParent);
 			request.getRequestDispatcher("tema.jsp").forward(request, response);
 			
 		} else {

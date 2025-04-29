@@ -16,15 +16,27 @@ public class Reply_M implements Reply_I{
 	public static final String GET_ALL_REPLIES = "SELECT * FROM respuestas WHERE flgstate = 1;";
 	public static final String GET_REPLY_BY_ID= "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_respuesta = ? and flgstate = 1;";
 	public static final String CREATE_REPLY = "INSERT INTO respuestas (id_tema, id_usuario, contenido) VALUES (?,?,?);";
+	public static final String CREATE__SUB_REPLY = "INSERT INTO respuestas (id_tema, id_usuario,contenido, id_respuesta_padre) VALUES (?,?,?,?);";
+	
 	public static final String UPDATE_REPLY = "UPDATE respuestas SET id_tema = ?, id_usuario = ?, contenido = ? WHERE id_respuesta = ?;";
 	public static final String DELETE_REPLY = "UPDATE respuestas SET flgstate = 0 WHERE id_respuesta = ?;";
 	public static final String GET_REPLIES_BY_TOPIC_ID = "SELECT\r\n"
 			+ "r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
 			+ "FROM respuestas r\r\n"
 			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
-			+ "WHERE r.id_tema = ? AND r.flgstate = 1;";
+			+ "WHERE r.id_tema = ? AND r.flgstate = 1";
+	public static final String GET_REPLIES_BY_TOPIC_ID_AND_PARENT_ID_NOT_NULL = "SELECT\r\n"
+			+ "r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
+			+ "FROM respuestas r\r\n"
+			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
+			+ "WHERE r.id_tema = ? AND r.flgstate = 1  AND r.id_respuesta_padre IS NOT NULL;";
 	public static final String GET_REPLIES_BY_USER_ID = "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_usuario = ? and flgstate = 1;";
 	public static final String GET_QUANTITY_REPLY_BY_TOPIC_ID = "SELECT COUNT(*) as cantidad FROM respuestas WHERE id_tema = ?;";
+	public static final String GET_REPLIES_BY_PARENT_ID = "SELECT r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
+			+ "FROM respuestas r\r\n"
+			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
+			+ "WHERE r.id_respuesta_padre = ? AND r.flgstate = 1;";
+	public static final String COUNT_REPLIES = "SELECT COUNT(*) FROM respuestas WHERE flgstate = 1;";
 	
 	// Ready
 	@Override
@@ -43,7 +55,7 @@ public class Reply_M implements Reply_I{
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));
 				reply.setContenido(rs.getString("contenido"));
-				reply.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				reply.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				reply.setEs_respuesta_aceptada(rs.getBoolean("es_respuesta_aceptada"));
 				reply.setId_respuesta_padre(rs.getInt("id_respuesta_padre"));
 				listReplies.add(reply);
@@ -86,7 +98,7 @@ public class Reply_M implements Reply_I{
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));
 				reply.setContenido(rs.getString("contenido"));
-				reply.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				reply.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				reply.setEs_respuesta_aceptada(rs.getBoolean("es_respuesta_aceptada"));
 				reply.setId_respuesta_padre(rs.getInt("id_respuesta_padre"));
 			}
@@ -274,7 +286,7 @@ public class Reply_M implements Reply_I{
 				reply.setId_tema(rs.getInt("id_tema"));
 				reply.setId_usuario(rs.getInt("id_usuario"));
 				reply.setContenido(rs.getString("contenido"));
-				reply.setFecha_publicacion(rs.getDate("fecha_publicacion"));
+				reply.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
 				reply.setEs_respuesta_aceptada(rs.getBoolean("es_respuesta_aceptada"));
 				reply.setId_respuesta_padre(rs.getInt("id_respuesta_padre"));
 				listReplies.add(reply);
@@ -332,6 +344,117 @@ public class Reply_M implements Reply_I{
 		}
 		return cantidad;
 	}
+
 	
+	@Override
+	public List<Reply_E> getRepliesByParentId(int parentId) {
+		List<Reply_E> listReplies = new ArrayList<Reply_E>();
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(GET_REPLIES_BY_PARENT_ID);
+			ps.setInt(1, parentId);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				Reply_E reply = new Reply_E();
+				reply.setId_respuesta(rs.getInt("id_respuesta"));
+				reply.setId_tema(rs.getInt("id_tema"));
+				reply.setId_usuario(rs.getInt("id_usuario"));
+				reply.setContenido(rs.getString("contenido"));
+				reply.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
+				reply.setEs_respuesta_aceptada(rs.getBoolean("es_respuesta_aceptada"));
+				reply.setId_respuesta_padre(rs.getInt("id_respuesta_padre"));
+				reply.setNombreUsuario(rs.getString("nombreUsuario"));
+				reply.setApellidoUsuario(rs.getString("apellidoUsuario"));
+				listReplies.add(reply);
+			}
+		} catch (Exception e) {
+			System.out.println("Error getting replies by parent ID>>> " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+				System.out.println("Error closing resources>>> " + e.getMessage());
+			}
+		}
+		return listReplies;
+	}
+
+	@Override
+	public boolean createSubReply(Reply_E reply) {
+		boolean result = false;
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(CREATE__SUB_REPLY);
+			ps.setInt(1, reply.getId_tema());
+			ps.setInt(2, reply.getId_usuario());
+			ps.setString(3, reply.getContenido());
+			ps.setInt(4, reply.getId_respuesta_padre());
+			
+			int rowsAffected = ps.executeUpdate();
+			
+			if (rowsAffected > 0) result = true;
+		} catch (Exception e) {
+			System.out.println("Error creating sub-reply>>> " + e.getMessage());
+			return false;
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+				System.out.println("Error closing resources>>> " + e.getMessage());
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int countReplies() {
+		int count = 0;
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(COUNT_REPLIES);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("Error counting replies>>> " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+				System.out.println("Error closing resources>>> " + e.getMessage());
+			}
+		}
+		return count;
+	}
 
 }

@@ -10,6 +10,12 @@ public interface Topic_I {
 	// List all topics
 	List<Topic_E> getAllTopics();
 	
+	List<Topic_E> getAllDeletedTopics();
+	
+	List<Topic_E> getAllTopicsBySearch(String keyword);
+	
+	List<Topic_E> getAllDeletedTopicsBySearch(String keyword);
+	
 	// Get topic by ID
 	Topic_E getTopicById(int id);
 	
@@ -22,6 +28,8 @@ public interface Topic_I {
 	// Delete topic by ID
 	boolean deleteTopic(int id);
 	
+	boolean restoreTopic(int id);
+	
 	// Get topics by category ID
 	List<Topic_E> getTopicsByCategoryId(int categoryId);
 	
@@ -29,4 +37,8 @@ public interface Topic_I {
 	List<Topic_E> getTopicsByUserId(int userId);
 	
 	void updateTopicViews(int id_tema);
+	
+	// Get the number of topics
+	int countTopics();
+	
 }

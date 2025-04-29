@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +50,7 @@ public class Auth_S extends HttpServlet {
 			User_E user = userDAO.getUserByEmail(email);
 			
 			session.setAttribute("currentUser", user);
-			request.getRequestDispatcher("Admin_S").forward(request, response);
+			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
 			
 		} else {
 			request.setAttribute("message", "usuario y/o contraseña incorrectos");
@@ -76,10 +77,14 @@ public class Auth_S extends HttpServlet {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
 		User_I userDAO = daoFactory.getUser();
 		boolean result = userDAO.createUser(user);
-		if (result) {;
+		
+		if (result) {
 			HttpSession session = request.getSession();
-			session.setAttribute("currentUser", user);
-			request.getRequestDispatcher("Admin_S").forward(request, response);
+			
+			User_E currentUser = userDAO.getUserByEmail(email);
+			
+			session.setAttribute("currentUser", currentUser);
+			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
 		} else {
 			System.out.println("Error creating user");
 		}
