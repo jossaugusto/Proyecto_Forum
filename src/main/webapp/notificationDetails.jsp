@@ -15,7 +15,7 @@
                     <a href="${pageContext.request.contextPath}/Admin_S?action=ManageUsers" class="btn btn-primary">Ver usuarios</a>
                 </c:when>
                 <c:when test="${notification.tipo_notificacion == 'respuesta'}">
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageReplies" class="btn btn-primary">Ver respuestas</a>
+                    <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopic&id_tema=${tema.id_tema}" class="btn btn-primary">Ver respuestas</a>
                 </c:when>
                 <c:when test="${notification.tipo_notificacion == 'voto'}">
                     <a href="${pageContext.request.contextPath}/Admin_S?action=ManageVotes" class="btn btn-primary">Ver votos</a>

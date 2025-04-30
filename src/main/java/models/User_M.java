@@ -15,6 +15,7 @@ public class User_M implements User_I {
 	// Database procedures
 	public static final String CREATE_USER = "INSERT INTO usuarios (nombre, apellido, email, password, tipo_usuario) VALUES (?, ?, ?, ?, ?)";
 	public static final String GET_ALL_USERS = "SELECT id_usuario, nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE flgstate = 1;";
+	public static final String GET_ALL_USERS_BY_ROL = "SELECT id_usuario, nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE flgstate = 1 AND tipo_usuario = ?;";
 	public static final String GET_ALL_DELETED_USERS = "SELECT id_usuario, nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE flgstate = 0;";
 	
 	public static final String GET_USER_BY_SEARCH = "SELECT id_usuario, nombre, apellido, email, tipo_usuario, fecha_registro FROM usuarios WHERE (nombre LIKE ? OR apellido LIKE ? OR email LIKE ? OR tipo_usuario LIKE ?) AND flgstate = 1;";
@@ -241,6 +242,47 @@ public class User_M implements User_I {
 		return user;
 	}
 
+	@Override
+	public List<User_E> getAllUsers(String rol) {
+		List<User_E> listUsers = new ArrayList<User_E>();
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(GET_ALL_USERS_BY_ROL);
+			ps.setString(1, rol);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				User_E user = new User_E();
+				user.setId_usuario(rs.getInt("id_usuario"));
+				user.setNombre(rs.getString("nombre"));
+				user.setApellido(rs.getString("apellido"));
+				user.setEmail(rs.getString("email"));
+				user.setTipo_usuario(rs.getString("tipo_usuario"));
+				user.setFecha_registro(rs.getTimestamp("fecha_registro"));
+				listUsers.add(user);
+			}
+		} catch (Exception e) {
+			System.out.println("Error getting all users>>> " + e.getMessage());
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+				System.out.println("Error closing resources>>> " + e.getMessage());
+			}
+		}
+		return listUsers;
+	}
+	
 	// Ready
 	@Override
 	public User_E getUserByEmail(String email) {
@@ -486,6 +528,9 @@ public class User_M implements User_I {
 		}
 		return count;
 	}
+
+	
+
 
 
 

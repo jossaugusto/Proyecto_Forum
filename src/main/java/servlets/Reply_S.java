@@ -11,8 +11,11 @@ import javax.servlet.http.HttpSession;
 
 import dao.DAOFactory;
 import entitys.Reply_E;
+import entitys.Topic_E;
 import entitys.User_E;
+import interfaces.Notification_I;
 import interfaces.Reply_I;
+import interfaces.Topic_I;
 
 
 @WebServlet("/Reply_S")
@@ -70,6 +73,12 @@ public class Reply_S extends HttpServlet {
 		}
 		
 		if (value) {
+			Topic_I topicDAO = daoFactory.getTopic();
+			Topic_E topic = topicDAO.getTopicById(Integer.parseInt(id_tema));
+			
+			Notification_I notificationDAO = daoFactory.getNotification();
+			notificationDAO.createNotification(topic.getId_usuario(), "respuesta","Tu tema sobre '" + topic.getTitulo() + "' ha recibido una respuesta.");
+			
 			response.sendRedirect("Topic_S?action=viewTopic&id_tema=" + id_tema);
 		} else {
 			String message = "Error al crear la respuesta";

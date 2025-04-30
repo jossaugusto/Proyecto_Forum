@@ -10,6 +10,8 @@ public interface User_I {
 	// List all users
 	List<User_E> getAllUsers();
 	
+	List<User_E> getAllUsers(String rol);
+	
 	List<User_E> getAllDeletedUsers();
 	
 	List<User_E> getAllUsersBySearch(String keyword);

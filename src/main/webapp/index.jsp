@@ -84,12 +84,12 @@
 	    <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationsByUserId&showUnread=false" 
-               class="btn btn-outline-primary ${empty param.showUnread ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/InitialConfi_S?showUnread=false" 
+               class="btn btn-outline-primary ${showUnread ? '' : 'active'}">
                 Todas
             </a>
-            <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationsByUserId&showUnread=true" 
-               class="btn btn-outline-primary ${not empty param.showUnread ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/InitialConfi_S?showUnread=true" 
+               class="btn btn-outline-primary ${showUnread ? 'active' : ''}">
                 No leídas 
                 <span class="badge bg-danger">${unreadCount}</span>
             </a>
@@ -100,17 +100,18 @@
         <c:when test="${not empty listNotifications}">
             <div class="list-group">
                 <c:forEach var="notificacion" items="${listNotifications}">
-                    <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationById&id_notificacion=${notificacion.id_notificacion}"
-                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class="fw-bold">${notificacion.tipo_notificacion}</div>
-                            <span>${notificacion.contenido}</span>
-                        </div>
-                        <small>
-                            <fmt:formatDate value="${notificacion.fecha}" pattern="dd/MM/yyyy HH:mm" />
-                        </small>
-                    </a>
-                </c:forEach>
+				    <a href="${pageContext.request.contextPath}/Notification_S?action=getNotificationById&id_notificacion=${notificacion.id_notificacion}"
+				       class="list-group-item list-group-item-action d-flex justify-content-between align-items-start
+				              ${notificacion.leida ? 'opacity-50' : ''}">
+				        <div class="ms-2 me-auto">
+				            <div class="fw-bold">${notificacion.tipo_notificacion}</div>
+				            <span>${notificacion.contenido}</span>
+				        </div>
+				        <small>
+				            <fmt:formatDate value="${notificacion.fecha}" pattern="dd/MM/yyyy HH:mm" />
+				        </small>
+				    </a>
+				</c:forEach>
             </div>
         </c:when>
         <c:otherwise>

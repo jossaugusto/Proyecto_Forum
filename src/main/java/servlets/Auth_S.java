@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import dao.DAOFactory;
 import entitys.User_E;
+import interfaces.Notification_I;
 import interfaces.User_I;
 
 @WebServlet("/Auth_S")
@@ -79,6 +81,14 @@ public class Auth_S extends HttpServlet {
 		boolean result = userDAO.createUser(user);
 		
 		if (result) {
+			
+			Notification_I notificationDAO = daoFactory.getNotification();
+			List<User_E> admins = userDAO.getAllUsers("admin");
+			
+			for (User_E admin : admins) {
+				notificationDAO.createNotification(admin.getId_usuario(), "registro-prueba","Un nuevo usuario se ha registrado en el foro.-prueba");
+			}	
+			
 			HttpSession session = request.getSession();
 			
 			User_E currentUser = userDAO.getUserByEmail(email);

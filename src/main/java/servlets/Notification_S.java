@@ -46,18 +46,34 @@ public class Notification_S extends HttpServlet {
 				// Call the method to create a notification
 				break;
 			case "deleteNotification":
-				// Call the method to delete a notification
+				deleteNotification(request, response);
 				break;
-			case "getNotificationsByUserId":
+			/*case "getNotificationsByUserId":
 				getNotificationsByUserId(request, response);
-				break;
+				break;*/
 			default:
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request type");
 		}
 	}
 
 
-	private void getNotificationsByUserId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+	private void deleteNotification(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id_notificacion = request.getParameter("id_notificacion");
+		
+		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+		Notification_I notificationDAO = daoFactory.getNotification();
+		
+		if (id_notificacion != null) {
+			int id = Integer.parseInt(id_notificacion);
+			notificationDAO.deleteNotification(id);
+			request.setAttribute("exito", "Notificacion eliminada");
+			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
+		} else {
+			request.setAttribute("error", "Error al eliminar la notificacion");
+		}
+	}
+
+	/*private void getNotificationsByUserId(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		HttpSession session = request.getSession();
 		User_E user = (User_E) session.getAttribute("currentUser");
 		boolean read = Boolean.parseBoolean(request.getParameter("showUnread"));
@@ -68,9 +84,11 @@ public class Notification_S extends HttpServlet {
 		List<Notification_E> listNotifications = notificationDAO.getNotificationsByUserId(user.getId_usuario(),read);
 	    request.setAttribute("listNotifications", listNotifications);
 	    request.getRequestDispatcher("InitialConfi_S").forward(request, response);
-	}
+	}*/
 
 	private void getNotificationById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+		String id_tema = request.getParameter("id_tema");
+		System.out.println("ID del tema: es getNotificationByiD" + id_tema);
 		String id_notificacion = request.getParameter("id_notificacion");
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
 		Notification_I notificationDAO = daoFactory.getNotification();

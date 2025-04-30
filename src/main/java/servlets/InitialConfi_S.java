@@ -64,6 +64,7 @@ public class InitialConfi_S extends HttpServlet {
 			    tema.setCantidadRespuestas(cantidad);
 			}
 			
+			request.setAttribute("showUnread", read);	
 		    request.setAttribute("listTopicsByUser", listTopicsByUser);
 		    request.setAttribute("listNotifications", listNotifications);
 		    request.setAttribute("unreadCount", unreadCount);

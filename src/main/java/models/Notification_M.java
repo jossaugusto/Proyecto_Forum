@@ -30,14 +30,14 @@ public class Notification_M implements Notification_I{
 	}
 
 	// Constantes DB
-	public static final String GET_ALL_NOTIFICATIONS = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha FROM notificaciones;";
-	public static final String GET_NOTIFICATION_BY_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha, leida FROM notificaciones WHERE id_notificacion = ?;";
+	public static final String GET_ALL_NOTIFICATIONS = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha FROM notificaciones WHERE flgstate = 1;";
+	public static final String GET_NOTIFICATION_BY_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha, leida FROM notificaciones WHERE id_notificacion = ? AND flgstate = 1;";
 	public static final String CREATE_NOTIFICATION = "INSERT INTO notificaciones (id_usuario_destino, tipo_notificacion, contenido) VALUES (?, ?, ?);";
-	public static final String MARK_AS_READ = "UPDATE notificaciones SET leida = true WHERE id_notificacion = ?;";
-	public static final String DELETE_NOTIFICATION = "UPDATE notificaciones SET flgstate = 0 WHERE id_notificacion = ?;";
-	public static final String GET_NOTIFICATIONS_BY_USER_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha FROM notificaciones WHERE id_usuario_destino = ?;";
-	public static final String GET_UNREAD_NOTIFICATIONS_BY_USER_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha FROM notificaciones WHERE id_usuario_destino = ? AND leida = 0;";
-	public static final String COUNT_UNREAD_NOTIFICATIONS = "SELECT COUNT(*) FROM notificaciones WHERE id_usuario_destino = ? AND leida = 0;";
+	public static final String MARK_AS_READ = "UPDATE notificaciones SET leida = true WHERE id_notificacion = ? AND flgstate = 1;";
+	public static final String DELETE_NOTIFICATION = "UPDATE notificaciones SET flgstate = 0 WHERE id_notificacion = ? AND flgstate = 1;";
+	public static final String GET_NOTIFICATIONS_BY_USER_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha,leida FROM notificaciones WHERE id_usuario_destino = ? AND flgstate = 1;";
+	public static final String GET_UNREAD_NOTIFICATIONS_BY_USER_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha, leida FROM notificaciones WHERE id_usuario_destino = ? AND leida = 0 AND flgstate = 1;";
+	public static final String COUNT_UNREAD_NOTIFICATIONS = "SELECT COUNT(*) FROM notificaciones WHERE id_usuario_destino = ? AND leida = 0 AND flgstate = 1;";
 	
 	//------------------------------------------------
 	
@@ -150,6 +150,7 @@ public class Notification_M implements Notification_I{
 				notification.setTipo_notificacion(rs.getString("tipo_notificacion"));
 				notification.setContenido(rs.getString("contenido"));
 				notification.setFecha(rs.getTimestamp("fecha"));
+				notification.setLeida(rs.getBoolean("leida"));
 				listNotifications.add(notification);
 				}
 			} catch (Exception e) {
