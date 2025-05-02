@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <jsp:include page="header.jsp">
     <jsp:param name="titulo" value="Crear Tema" />
@@ -15,22 +17,22 @@
                 
 
                 <div class="mb-3">
-                    <label for="titulo" class="form-label">Título del Tema</label>
-                    <input type="text" class="form-control" id="titulo" name="titulo" required placeholder="Escribe el título del tema">
+                    <label for="titulo" class="form-label">TÃ­tulo del Tema</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" required placeholder="Escribe el tÃ­tulo del tema">
                 </div>
 
 
                 <div class="mb-3">
                     <label for="contenido" class="form-label">Contenido</label>
-                    <textarea class="form-control" id="contenido" name="contenido" rows="6" required placeholder="Desarrolla el contenido del tema aquí..."></textarea>
+                    <textarea class="form-control" id="contenido" name="contenido" rows="6" required placeholder="Desarrolla el contenido del tema aquÃ­..."></textarea>
                 </div>
 
 
                 <div class="mb-3">
-                    <label for="id_categoria" class="form-label">Categoría</label>
+                    <label for="id_categoria" class="form-label">CategorÃ­a</label>
                     <select class="form-select" id="id_categoria" name="id_categoria" required>
-                        <option value="">Seleccione una categoría</option>
-                        <c:forEach var="categoria" items="${listCategories}">
+                        <option value="">Seleccione una categorÃ­a</option>
+                        <c:forEach var="categoria" items="${sessionScope.listCategories}">
                             <option value="${categoria.id_categoria}">${categoria.nombre}</option>
                         </c:forEach>
                     </select>
@@ -52,7 +54,7 @@
 
         <c:otherwise>
             <div class="alert alert-warning" role="alert">
-                Debes <a href="${pageContext.request.contextPath}/login.jsp">iniciar sesión</a> para crear un tema.
+                Debes <a href="${pageContext.request.contextPath}/login.jsp">iniciar sesiÃ³n</a> para crear un tema.
             </div>
         </c:otherwise>
     </c:choose>

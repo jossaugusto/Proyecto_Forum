@@ -1,5 +1,7 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <jsp:include page="header.jsp">
     <jsp:param name="titulo" value="Perfil de Usuario" />
@@ -38,7 +40,7 @@
                     </ul>
 
                     <div class="mt-4 text-center">
-                        <a href="${pageContext.request.contextPath}/editarPerfil.jsp" class="btn btn-outline-primary">
+                        <a href="${pageContext.request.contextPath}/editProfile.jsp" class="btn btn-outline-primary">
                             Editar Perfil
                         </a>
                     </div>

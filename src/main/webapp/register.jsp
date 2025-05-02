@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -55,6 +56,16 @@
         <p class="mt-3 text-center">
             ¿Ya tienes una cuenta? <a href="login.jsp">Inicia sesión aquí</a>
         </p>
+        <p class="text-center">
+            <a href="${pageContext.request.contextPath}/InitialConfi_S">Volver al inicio</a>
+        </p>
+        <div class="mt-3">
+            <c:if test="${not empty message}">
+                <div class="alert alert-danger text-center">
+                    ${message}
+                </div>
+            </c:if>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

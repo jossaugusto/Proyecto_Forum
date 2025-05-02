@@ -1,19 +1,19 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Temas en Categoría" />
+    <jsp:param name="titulo" value="Temas en CategorÃ­a" />
 </jsp:include>
 
 <div class="container mt-4">
-    <h2>Temas disponibles en la categoría: ${categoriaSeleccionada}</h2>
+    <h2>Temas disponibles en la categorÃ­a: ${category}</h2>
 
     <c:choose>
-        <c:when test="${not empty listTopics}">
+        <c:when test="${not empty listTopicsByCategoryId}">
             <div class="list-group">
-                <c:forEach var="tema" items="${listTopics}">
+                <c:forEach var="tema" items="${listTopicsByCategoryId}">
                     <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopic&id_tema=${tema.id_tema}" 
                        class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
@@ -23,7 +23,7 @@
                         <p class="mb-1">${tema.contenido}</p>
                         <small>
                             Por: ${tema.nombreUsuario} ${tema.apellidoUsuario} |
-                            Categoría: ${tema.nombreCategoria}
+                            CategorÃ­a: ${tema.nombreCategoria}
                         </small>
                     </a>
                 </c:forEach>
@@ -31,7 +31,7 @@
             
         </c:when>
         <c:otherwise>
-            <div class="alert alert-info mt-3">No hay temas disponibles para esta categoría.</div>
+            <div class="alert alert-info mt-3">No hay temas disponibles para esta categorÃ­a.</div>
             <c:if test="${not empty sessionScope.currentUser}">
                 <a href="${pageContext.request.contextPath}/Category_S?action=listCategories" class="btn btn-primary mt-3">Crear un nuevo tema</a>
             </c:if>

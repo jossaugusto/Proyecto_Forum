@@ -24,6 +24,9 @@ public class Auth_S extends HttpServlet {
     }
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		
 		String type = request.getParameter("type") != null ? request.getParameter("type") : "login";
 		switch (type) {
 			case "login":
@@ -83,7 +86,7 @@ public class Auth_S extends HttpServlet {
 		if (result) {
 			
 			Notification_I notificationDAO = daoFactory.getNotification();
-			List<User_E> admins = userDAO.getAllUsers("admin");
+			List<User_E> admins = userDAO.getAllUsers("admin", null);
 			
 			for (User_E admin : admins) {
 				notificationDAO.createNotification(admin.getId_usuario(), "registro-prueba","Un nuevo usuario se ha registrado en el foro.-prueba");
@@ -96,7 +99,8 @@ public class Auth_S extends HttpServlet {
 			session.setAttribute("currentUser", currentUser);
 			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
 		} else {
-			System.out.println("Error creating user");
+			request.setAttribute("message", "Error al registrar el usuario");
+			request.getRequestDispatcher("register.jsp").forward(request, response);
 		}
 	}
 

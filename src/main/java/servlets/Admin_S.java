@@ -1,5 +1,6 @@
 package servlets;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -33,6 +34,8 @@ public class Admin_S extends HttpServlet {
 	}
 	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
 		
 		HttpSession session = request.getSession();
 		User_E user = (User_E) session.getAttribute("currentUser");
@@ -55,8 +58,8 @@ public class Admin_S extends HttpServlet {
 				case "EditUser":
 					editUser(request, response);
 					break;
-				case "SaveUser":
-					saveUser(request, response);
+				case "UpdateUser":
+					UpdateUser(request, response);
 					break;
 				case "DeleteUser":
 					deleteUser(request, response);
@@ -74,8 +77,8 @@ public class Admin_S extends HttpServlet {
 				case "EditTopic":
 					editTopic(request, response);
 					break;
-				case "SaveTopic":
-					saveTopic(request, response);
+				case "UpdateTopic":
+					updateTopic(request, response);
 					break;
 				case "DeleteTopic":
 					deleteTopic(request, response);
@@ -93,8 +96,8 @@ public class Admin_S extends HttpServlet {
 				case "EditCategory":
 					editCategory(request, response);
 					break;
-				case "SaveCategory":
-					saveCategory(request, response);
+				case "UpdateCategory":
+					updateCategory(request, response);
 					break;
 				case "DeleteCategory":
 					deleteCategory(request, response);
@@ -109,20 +112,19 @@ public class Admin_S extends HttpServlet {
 					System.out.println("Accion no valida en Admin_S");
 			}
 		} else {
-			request.setAttribute("message", "Debe iniciar sesion");
+			request.setAttribute("message", "Debe iniciar sesion.");
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}
 
 	}
 	
-
+	DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+	User_I userDAO = daoFactory.getUser();
+	Topic_I topicDAO = daoFactory.getTopic();
+	Category_I categoryDAO = daoFactory.getCategory();
 
 	// Panel de administracion
 	private void adminPanel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-			User_I userDAO = daoFactory.getUser();
-			Topic_I topicDAO = daoFactory.getTopic();
 			Reply_I replyDAO = daoFactory.getReply();
 
 			int cantidadUsuarios = userDAO.countUsers();
@@ -133,102 +135,99 @@ public class Admin_S extends HttpServlet {
 			request.setAttribute("cantidadTemas", cantidadTemas);
 			request.setAttribute("cantidadRespuestas", cantidadRespuestas);
 			request.getRequestDispatcher("admin.jsp").forward(request, response);
-
 		
 	}
 	
 	//----------------------------------------------------------
 	
-	
 	// Gestionar usuarios
 	private void manageUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String keyword = request.getParameter("keyword");
+		String order = request.getParameter("order") != null ? request.getParameter("order") : "ASC";
+		
 		List<User_E> listUsers = null;
 		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
-		
 		if (keyword != null && !keyword.isEmpty()) {
-			listUsers = userDAO.getAllUsersBySearch(keyword);
+			listUsers = userDAO.getAllUsers(keyword, order);			
 		} else {
-			listUsers = userDAO.getAllUsers();
+			listUsers = userDAO.getAllUsers(null, order);
 		}
 		
 		request.setAttribute("listUsers", listUsers);
+		request.setAttribute("order", order);
 		request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
 	}
 	
 	// Gestionar usuarios eliminados
 	private void manageDeletedUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String keyword = request.getParameter("keyword");
+		String order = request.getParameter("order") != null ? request.getParameter("order") : "ASC";
 		List<User_E> listDeletedUsers = null;
 		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
-		
-		
 		if (keyword != null && !keyword.isEmpty()) {
-			listDeletedUsers = userDAO.getAllDeletedUsersBySearch(keyword);
+			listDeletedUsers = userDAO.getAllDeletedUsers(keyword,order);
 		} else {
-			listDeletedUsers = userDAO.getAllDeletedUsers();
+			listDeletedUsers = userDAO.getAllDeletedUsers(null,order);
 		}
 		
 		request.setAttribute("listDeletedUsers", listDeletedUsers);
+		request.setAttribute("order", order);
 		request.getRequestDispatcher("manageDeletedUsers.jsp").forward(request, response);
 	}
 
 	// Editar usuario
 	private void editUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_usuario = request.getParameter("id_usuario");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
-		User_E user = userDAO.getUserById(Integer.parseInt(id_usuario));
+		String id_user = request.getParameter("id_user");
 		
-		request.setAttribute("user", user);
-		request.setAttribute("id_usuario", id_usuario);
+		if (id_user != null) {
+			User_E user = userDAO.getUserById(Integer.parseInt(id_user));
+			
+			request.setAttribute("user", user);
+		} else {
+			request.setAttribute("error", "Error al obtener el usuario");
+		}
+
 		request.getRequestDispatcher("editUser.jsp").forward(request, response);
 	}
 
 	// Guardar usuario
-	private void saveUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_usuario = request.getParameter("id_usuario");
-		String nombre = request.getParameter("nombre").trim();
-		String apellido = request.getParameter("apellido").trim();
-		String email = request.getParameter("email").trim();
-		String tipo_usuario = request.getParameter("tipo_usuario");
+	private void UpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String id_user = request.getParameter("id_user");
+		String name = request.getParameter("name");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+		String tipo_user = request.getParameter("tipo_user");
 		
-		User_E user = new User_E();
-		user.setId_usuario(Integer.parseInt(id_usuario));
-		user.setNombre(nombre);
-		user.setApellido(apellido);
-		user.setEmail(email);
-		user.setTipo_usuario(tipo_usuario);
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
-		
-		boolean result = userDAO.updateUser(user, false);
-		
-		if (result) {
-			request.setAttribute("exito", "Éxito al actualizar el usuario");
-			request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
-
+		if (id_user != null) {
+			User_E user = new User_E();
+			user.setId_usuario(Integer.parseInt(id_user));
+			user.setNombre(name);
+			user.setApellido(lastName);
+			user.setEmail(email);
+			user.setTipo_usuario(tipo_user);
+			
+			boolean result = userDAO.updateUser(user, false);
+			
+			if (result) {
+				request.setAttribute("exito", "Éxito al actualizar el usuario con ID: " + id_user);
+				request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
+			} else {
+				request.setAttribute("error", "Error al actualizar el usuario con ID: " + id_user);
+				request.getRequestDispatcher("editUser.jsp").forward(request, response);
+			}
 		} else {
-			request.setAttribute("error", "Error al actualizar el usuario");
+			request.setAttribute("error", "Error al obtener el usuario");
 			request.getRequestDispatcher("editUser.jsp").forward(request, response);
 		}
 	}
 	
 	// Eliminar usuario
 	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_usuario = request.getParameter("id_usuario");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
-		
-		boolean result = userDAO.deleteUser(Integer.parseInt(id_usuario));
+		String id_user = request.getParameter("id_user");
+		boolean result = userDAO.deleteUser(Integer.parseInt(id_user));
 		
 		if (result) {
-			request.setAttribute("exito", "Éxito al eliminar el usuario");
+			request.setAttribute("exito", "Éxito al eliminar el usuario con ID: " + id_user);
 			request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
 		} else {
 			request.setAttribute("error", "Error al eliminar el usuario");
@@ -238,38 +237,34 @@ public class Admin_S extends HttpServlet {
 	
 	// Restaurar usuario
 	private void restoreUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_usuario = request.getParameter("id_usuario");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
-		
-		boolean result = userDAO.restoreUser(Integer.parseInt(id_usuario));
+		String id_user = request.getParameter("id_user");
+		boolean result = userDAO.restoreUser(Integer.parseInt(id_user));
 		
 		if (result) {
-			request.setAttribute("exito", "Éxito al restaurar usuario");
+			request.setAttribute("exito", "Éxito al restaurar usuario con ID: " + id_user);
 			request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
 		} else {
-			request.setAttribute("error", "Error al restaurar el usuario");
+			request.setAttribute("error", "Error al restaurar el usuario con ID: " + id_user);
 			request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
 		}
 	}
-
 	
 	//----------------------------------------------------------
 	
 	// Gestionar temas
 	private void manageTopics(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String keyword = request.getParameter("keyword");
-		List<Topic_E> listTopics = null;
+		String order = request.getParameter("order") != null ? request.getParameter("order") : "ASC";
 		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
+		List<Topic_E> listTopics = null;
 
 		if (keyword != null && !keyword.isEmpty()) {
-			listTopics = topicDAO.getAllTopicsBySearch(keyword);
+			listTopics = topicDAO.getAllTopics(keyword, order);
 		} else {
-			listTopics = topicDAO.getAllTopics();
+			listTopics = topicDAO.getAllTopics(null, order);
 		}
 		
+		request.setAttribute("order", order);
 		request.setAttribute("listTopics", listTopics);
 		request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
 	}
@@ -277,54 +272,46 @@ public class Admin_S extends HttpServlet {
 	// Gestionar temas eliminados
 	private void manageDeletedTopics(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String keyword = request.getParameter("keyword");
+		String order = request.getParameter("order") != null ? request.getParameter("order") : "ASC";
+		
 		List<Topic_E> listDeletedUsers = null;
 		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
-
 		if (keyword != null && !keyword.isEmpty()) {
-			listDeletedUsers = topicDAO.getAllDeletedTopicsBySearch(keyword);
+			listDeletedUsers = topicDAO.getAllDeletedTopics(keyword, order);
 		} else {
-			listDeletedUsers = topicDAO.getAllDeletedTopics();
+			listDeletedUsers = topicDAO.getAllDeletedTopics(null, order);
 		}
 		
+		request.setAttribute("order", order);
 		request.setAttribute("listDeletedTopics", listDeletedUsers);
 		request.getRequestDispatcher("manageDeletedTopics.jsp").forward(request, response);
 	}
 	
 	// Editar tema
 	private void editTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_tema = request.getParameter("id_tema");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+		String id_tema = request.getParameter("id_topic");
 		
 		Topic_I userDAO = daoFactory.getTopic();
 		Topic_E topic = userDAO.getTopicById(Integer.parseInt(id_tema));
 		
-		Category_I categoryDAO = daoFactory.getCategory();
-		List<Category_E> listCategories = categoryDAO.getAllCategories();
-		
 		request.setAttribute("topic", topic);
-		request.setAttribute("listCategories", listCategories);
 		request.getRequestDispatcher("editTopic.jsp").forward(request, response);
 	}
 
 	// Guardar tema
-	private void saveTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String titulo = request.getParameter("titulo");
-		String contenido = request.getParameter("contenido");
-		int categoria = Integer.parseInt(request.getParameter("id_categoria"));
-		int id_tema = Integer.parseInt(request.getParameter("id_tema"));
-		String estado = request.getParameter("estado");
+	private void updateTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id_topic = Integer.parseInt(request.getParameter("id_topic"));
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
+		int id_category = Integer.parseInt(request.getParameter("id_category"));
+		String state = request.getParameter("state");
 		
 		Topic_E topic = new Topic_E();
-		topic.setTitulo(titulo);
-		topic.setContenido(contenido);
-		topic.setId_categoria(categoria);
-		topic.setEstado(estado);
-		topic.setId_tema(id_tema);
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
+		topic.setId_tema(id_topic);
+		topic.setTitulo(title);
+		topic.setContenido(content);
+		topic.setId_categoria(id_category);
+		topic.setEstado(state);
 		
 		boolean result = topicDAO.updateTopic(topic);
 		
@@ -340,11 +327,10 @@ public class Admin_S extends HttpServlet {
 	
 	// Eliminar tema
 	private void deleteTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_tema = request.getParameter("id_tema");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
+		String id_topic = request.getParameter("id_topic");
+		System.out.println("ID_TEMA en delete: " + id_topic);
 		
-		boolean result = topicDAO.deleteTopic(Integer.parseInt(id_tema));
+		boolean result = topicDAO.deleteTopic(Integer.parseInt(id_topic));
 		
 		if (result) {
 			request.setAttribute("exito", "Éxito al eliminar el tema");
@@ -357,96 +343,104 @@ public class Admin_S extends HttpServlet {
 		
 	// Restaurar tema
 	private void restoreTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_usuario = request.getParameter("id_usuario");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
+		String id_topic = request.getParameter("id_topic");
 		
-		boolean result = topicDAO.restoreTopic(Integer.parseInt(id_usuario));
+		boolean result = topicDAO.restoreTopic(Integer.parseInt(id_topic));
 		
 		if (result) {
-			request.setAttribute("exito", "Éxito al restaurar usuario");
+			request.setAttribute("exito", "Éxito al restaurar tema");
 			request.getRequestDispatcher("Admin_S?action=ManageTopics").forward(request, response);
 		} else {
-			request.setAttribute("error", "Error al restaurar el usuario");
+			request.setAttribute("error", "Error al restaurar el tema");
 			request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
 		}
 	}
-	
 	
 	//----------------------------------------------------------
 	
 	// Gestionar Categorias
 	private void manageCategories(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String keyword = request.getParameter("keyword");
-		List<Category_E> listCategories = null;
+		String order = request.getParameter("order") != null ? request.getParameter("order") : "ASC";
 		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
+		List<Category_E> listCategories = null;
 
 		if (keyword != null && !keyword.isEmpty()) {
-			listCategories = categoryDAO.getAllCategoriesBySearch(keyword);
+			listCategories = categoryDAO.getAllCategories(keyword, order);
 		} else {
-			listCategories = categoryDAO.getAllCategories();
+			listCategories = categoryDAO.getAllCategories(null, order);
 		}
 		
+		request.setAttribute("order", order);
 		request.setAttribute("listCategories", listCategories);
 		request.getRequestDispatcher("manageCategories.jsp").forward(request, response);
 	}
 
 	private void manageDeletedCategories(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String keyword = request.getParameter("keyword");
+		String order = request.getParameter("order") != null ? request.getParameter("order") : "ASC";
+		
 		List<Category_E> listDeletedCategories = null;
 		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
-
 		if (keyword != null && !keyword.isEmpty()) {
-			listDeletedCategories = categoryDAO.getAllDeletedCategoriesBySearch(keyword);
+			listDeletedCategories = categoryDAO.getAllDeletedCategories(keyword, order);
 		} else {
-			listDeletedCategories = categoryDAO.getAllDeletedCategories();
+			listDeletedCategories = categoryDAO.getAllDeletedCategories(null, order);
 		}
 		
+		request.setAttribute("order", order);
 		request.setAttribute("listDeletedCategories", listDeletedCategories);
 		request.getRequestDispatcher("manageDeletedCategories.jsp").forward(request, response);
 	}
 
 	private void registerCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    String nombre = request.getParameter("nombre");
+		String nombre = request.getParameter("nombre");
 	    String descripcion = request.getParameter("descripcion");
-
 	    Part filePart = request.getPart("imagen");
 	    
-	    // Obtener el nombre original sin extensión
+	    // Obtener el nombre y extensión del archivo
 	    String originalName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-	    String baseName = originalName.contains(".") ? originalName.substring(0, originalName.lastIndexOf('.')) : originalName;
+	    String extension = "";
 	    
-	    // Nombre de archivo nuevo forzado como .png
-	    String newFileName = baseName + ".png";
-
-	    // Directorio de subida
-	    String uploadPath = getServletContext().getRealPath("") + File.separator + "imgs";
-	    File uploadDir = new File(uploadPath);
-	    if (!uploadDir.exists()) {
-	        uploadDir.mkdirs();
+	    // Verificar si el archivo tiene extensión
+	    if (originalName.contains(".")) {
+	        extension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
+	        // Comprobar que sea una extensión permitida
+	        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
+	            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
+	            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+	            return;
+	        }
+	    } else {
+	        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
+	        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+	        return;
 	    }
+	    
+	    // Generar un nombre único para evitar colisiones, manteniendo la extensión original
+	    String baseName = System.currentTimeMillis() + "_" + originalName.substring(0, originalName.lastIndexOf('.'));
+	    String newFileName = baseName + extension;
+	    
+	    String uploadPath = getServletContext().getInitParameter("project-images-dir");
+	    
+	    // Asegurarse de que el directorio exista
+	    File uploadDir = new File(uploadPath);
+	    if (!uploadDir.exists()) uploadDir.mkdirs();
 
-	    // Ruta completa en el servidor
+	    // Ruta completa en el servidor para guardar el archivo
 	    String filePath = uploadPath + File.separator + newFileName;
 	    filePart.write(filePath);
-
+	    
 	    // Ruta relativa para guardar en la BD
-	    String imagePath = "imgs/" + newFileName;
-
+	    String imagePath = newFileName;
+	    
 	    // Crear objeto categoría
 	    Category_E category = new Category_E();
 	    category.setNombre(nombre);
 	    category.setDescripcion(descripcion);
 	    category.setImagen(imagePath);
-
-	    DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-	    Category_I categoryDAO = daoFactory.getCategory();
 	    boolean result = categoryDAO.createCategory(category);
-
+	    
 	    if (result) {
 	        request.setAttribute("exito", "Éxito al registrar la categoría");
 	        request.getRequestDispatcher("Admin_S?action=ManageCategories").forward(request, response);
@@ -455,40 +449,53 @@ public class Admin_S extends HttpServlet {
 	        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
 	    }
 	}
-
-
 	
 	private void editCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_categoria = request.getParameter("id_categoria");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+		String id_category = request.getParameter("id_category");
 		
-		Category_I categoryDAO = daoFactory.getCategory();
-		Category_E category = categoryDAO.getCategoryById(Integer.parseInt(id_categoria));
+		Category_E category = categoryDAO.getCategoryById(Integer.parseInt(id_category));
 		
 		request.setAttribute("category", category);
 		request.getRequestDispatcher("editCategory.jsp").forward(request, response);
 	}
 
-	private void saveCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+	private void updateCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String nombre = request.getParameter("nombre");
 		String descripcion = request.getParameter("descripcion");
-		int id_categoria = Integer.parseInt(request.getParameter("id_categoria"));
+		int id_category = Integer.parseInt(request.getParameter("id_category"));
 		
 		Part filePart = request.getPart("imagen");
 	    
-	    // Obtener el nombre original sin extensión
+	    // Obtener el nombre y extensión del archivo
 	    String originalName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-	    String baseName = originalName.contains(".") ? originalName.substring(0, originalName.lastIndexOf('.')) : originalName;
+	    String extension = "";
 	    
-	    // Nombre de archivo nuevo forzado como .png
-	    String newFileName = baseName + ".png";
+	    // Verificar si el archivo tiene extensión
+	    if (originalName.contains(".")) {
+	        extension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
+	        // Comprobar que sea una extensión permitida
+	        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
+	            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
+	            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+	            return;
+	        }
+	    } else {
+	        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
+	        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+	        return;
+	    }
+	    
+	   // Generar un nombre único para evitar colisiones, manteniendo la extensión original
+	    String baseName = System.currentTimeMillis() + "_" + originalName.substring(0, originalName.lastIndexOf('.'));
+	    String newFileName = baseName + extension;
 
 	    // Directorio de subida
-	    String uploadPath = getServletContext().getRealPath("") + File.separator + "imgs";
+	    String uploadPath = getServletContext().getInitParameter("project-images-dir");
+	    
+	    // Asegurarse de que el directorio exista
 	    File uploadDir = new File(uploadPath);
-	    if (!uploadDir.exists()) {
-	        uploadDir.mkdirs();
-	    }
+	    if (!uploadDir.exists()) uploadDir.mkdirs();
 
 	    // Ruta completa en el servidor
 	    String filePath = uploadPath + File.separator + newFileName;
@@ -496,16 +503,12 @@ public class Admin_S extends HttpServlet {
 
 	    // Ruta relativa para guardar en la BD
 	    String imagePath = newFileName;
-		
-		
+	    
 		Category_E category = new Category_E();
 		category.setNombre(nombre);
 		category.setDescripcion(descripcion);
 		category.setImagen(imagePath);
-		category.setId_categoria(id_categoria);
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
+		category.setId_categoria(id_category);
 		
 		boolean result = categoryDAO.updateCategory(category);
 		
@@ -519,12 +522,11 @@ public class Admin_S extends HttpServlet {
 		}
 	}
 
+	
 	private void deleteCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_categoria = request.getParameter("id_categoria");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
+		String id_category = request.getParameter("id_category");
 		
-		boolean result = categoryDAO.deleteCategory(Integer.parseInt(id_categoria));
+		boolean result = categoryDAO.deleteCategory(Integer.parseInt(id_category));
 		
 		if (result) {
 			request.setAttribute("exito", "Éxito al eliminar la categoria");
@@ -535,12 +537,11 @@ public class Admin_S extends HttpServlet {
 		}
 	}
 
+	
 	private void restoreCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_categoria = request.getParameter("id_categoria");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
+		String id_category = request.getParameter("id_category");
 		
-		boolean result = categoryDAO.restoreCategory(Integer.parseInt(id_categoria));
+		boolean result = categoryDAO.restoreCategory(Integer.parseInt(id_category));
 		
 		if (result) {
 			request.setAttribute("exito", "Éxito al restaurar la categoria");

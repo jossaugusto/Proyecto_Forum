@@ -1,22 +1,26 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Editar Categoría" />
+    <jsp:param name="titulo" value="Editar CategorÃ­a" />
 </jsp:include>
 
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="card-title mb-4">Editar Categoría</h2>
+            <h2 class="card-title mb-4">Editar CategorÃ­a</h2>
 
-            <form action="${pageContext.request.contextPath}/Admin_S?action=SaveCategory"  method="post" enctype="multipart/form-data">
-               	<input type="hidden" name="id_categoria" value="${category.id_categoria}" />
+            <form action="${pageContext.request.contextPath}/Admin_S?action=UpdateCategory"  method="post" enctype="multipart/form-data">
+               	<input type="hidden" name="id_category" value="${category.id_categoria}" />
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre:</label>
                     <input type="text" id="nombre" name="nombre" class="form-control" value="${category.nombre}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción:</label>
+                    <label for="descripcion" class="form-label">DescripciÃ³n:</label>
                     <textarea id="descripcion" name="descripcion" class="form-control" required>${category.descripcion}</textarea>
                 </div>
 

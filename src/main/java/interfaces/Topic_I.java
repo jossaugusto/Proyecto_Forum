@@ -8,13 +8,9 @@ public interface Topic_I {
 	// CRUD operations
 	
 	// List all topics
-	List<Topic_E> getAllTopics();
+	List<Topic_E> getAllTopics(String keyword, String order);
 	
-	List<Topic_E> getAllDeletedTopics();
-	
-	List<Topic_E> getAllTopicsBySearch(String keyword);
-	
-	List<Topic_E> getAllDeletedTopicsBySearch(String keyword);
+	List<Topic_E> getAllDeletedTopics(String keyword, String order);
 	
 	// Get topic by ID
 	Topic_E getTopicById(int id);

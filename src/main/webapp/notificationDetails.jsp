@@ -1,7 +1,10 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="NotificaciÛn" />
+    <jsp:param name="titulo" value="NotificaciÔøΩn" />
 </jsp:include>
 
 <div class="container mt-5">
@@ -22,13 +25,13 @@
                 </c:when>
             </c:choose>
 
-            <!-- BotÛn eliminar -->
+            <!-- BotÔøΩn eliminar -->
             <form method="post" action="${pageContext.request.contextPath}/Notification_S" class="mt-3">
                 <input type="hidden" name="action" value="deleteNotification" />
                 <input type="hidden" name="id_notificacion" value="${notification.id_notificacion}" />
                 <button type="submit" class="btn btn-danger"
-                        onclick="return confirm('øEst·s seguro de eliminar esta notificaciÛn?');">
-                    <i class="bi bi-trash"></i> Eliminar NotificaciÛn
+                        onclick="return confirm('¬øEst√°s seguro de eliminar esta notificaci√≥n?');">
+                    <i class="bi bi-trash"></i> Eliminar Notificaci√≥n
                 </button>
             </form>
         </div>

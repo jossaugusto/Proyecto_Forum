@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dao.DAOFactory;
-import entitys.Category_E;
-import interfaces.Category_I;
+import entitys.Topic_E;
+import interfaces.Topic_I;
 
 
 @WebServlet("/Category_S")
@@ -23,36 +23,34 @@ public class Category_S extends HttpServlet {
     }
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
 		
 		String action = request.getParameter("action");
 		
 		switch (action) {
-			case "viewCategories":
-				viewCategories(request, response);
-				break;
-			case "listCategories":
-				listCategory(request, response);
+			case "viewTopics":
+				viewTopics(request, response);
 				break;
 			default:
 				System.out.println("Accion no reconocida");
 		}
 	}
+	
+	DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+	Topic_I topicDAO = daoFactory.getTopic();
 
-	private void listCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
-		List<Category_E> listCategories = categoryDAO.getAllCategories();
-		request.setAttribute("listCategories", listCategories);
-		request.getRequestDispatcher("temaNuevo.jsp").forward(request, response);
-	}
+	private void viewTopics(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String id_category = request.getParameter("id_category");
+		String nombre_category = request.getParameter("nombre_category");
 
-	private void viewCategories(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Category_I categoryDAO = daoFactory.getCategory();
-		List<Category_E> listCategories = categoryDAO.getAllCategories();
+		if (id_category != null) {
+			List<Topic_E> listTopicsByCategoryId = topicDAO.getTopicsByCategoryId(Integer.parseInt(id_category));
+			request.setAttribute("category", nombre_category);
+			request.setAttribute("listTopicsByCategoryId", listTopicsByCategoryId);
+		}
 		
-		request.setAttribute("listCategories", listCategories);
-		request.getRequestDispatcher("categorias.jsp").forward(request, response);
+		request.getRequestDispatcher("topicByCategory.jsp").forward(request, response);
 	}
-
+	
 }

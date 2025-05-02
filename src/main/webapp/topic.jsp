@@ -1,9 +1,12 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
 	<jsp:param name="titulo" value="Tema" />
 </jsp:include>
+
 
 <div class="container mt-5">
 	<div class="card">
@@ -16,7 +19,7 @@
 				<fmt:formatDate value="${topic.fecha_publicacion}"
 					pattern="dd/MM/yyyy HH:mm" />
 				<br> Por: ${topic.nombreUsuario} ${topic.apellidoUsuario} |
-				Categoría: ${topic.nombreCategoria}
+				CategorÃ­a: ${topic.nombreCategoria}
 			</p>
 			<hr>
 			<p>${topic.contenido}</p>
@@ -101,7 +104,7 @@
 		</c:if>
 
 		<c:if test="${empty listRepliesByTopicId}">
-			<div class="alert alert-info mt-3">No hay respuestas aún. ¡Sé
+			<div class="alert alert-info mt-3">No hay respuestas aÃºn. Â¡SÃ©
 				el primero en responder!</div>
 		</c:if>
 	</div>
@@ -118,7 +121,7 @@
 					<input type="hidden" name="id_tema" value="${topic.id_tema}">
 					<div class="mb-3">
 						<textarea name="contenido" class="form-control" rows="4" required
-							placeholder="Escribe tu respuesta aquí..."></textarea>
+							placeholder="Escribe tu respuesta aquÃ­..."></textarea>
 					</div>
 					<button type="submit" name="action" value="newReply"
 						class="btn btn-primary">Publicar respuesta</button>
@@ -127,7 +130,7 @@
 			<c:otherwise>
 				<p class="text-muted">
 					Debes <a href="${pageContext.request.contextPath}/login.jsp">iniciar
-						sesión</a> para responder.
+						sesiÃ³n</a> para responder.
 				</p>
 			</c:otherwise>
 		</c:choose>

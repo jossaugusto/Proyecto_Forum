@@ -21,19 +21,26 @@ public class User_S extends HttpServlet {
     }
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        if (session == null || session.getAttribute("currentUser") == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		
+		HttpSession session = request.getSession();
+        User_E currentUser = (User_E) session.getAttribute("currentUser");
+        
+        if(currentUser == null) {
+        	request.setAttribute("message", "Debes iniciar sesión.");
+			request.getRequestDispatcher("login.jsp").forward(request, response);
+			return;
+		}
 		
 		String action = request.getParameter("action");
+		
 		switch (action) {
-			case "updateProfile":
+			case "UpdateProfile":
 				updateProfile(request, response);
 				break;
 			default:
-				response.sendRedirect("error.jsp");
+				System.out.println("Acción no válida.");
 		}
 	}
 
@@ -41,19 +48,19 @@ public class User_S extends HttpServlet {
             HttpSession session = request.getSession();
             User_E currentUser = (User_E) session.getAttribute("currentUser");
 
-            int id_usuario = Integer.parseInt(request.getParameter("id_usuario"));
-            String nombre = request.getParameter("nombre").trim();
-            String apellido = request.getParameter("apellido").trim();
-            String email = request.getParameter("email").trim();
-            String password = request.getParameter("password").trim();
+    		String name = request.getParameter("name");
+    		String lastName = request.getParameter("lastName");
+    		String email = request.getParameter("email");
+    		String password = request.getParameter("password");
 
             // Actualizamos los datos
-            currentUser.setNombre(nombre);
-            currentUser.setApellido(apellido);
+            currentUser.setNombre(name);
+            currentUser.setApellido(lastName);
             currentUser.setEmail(email);
-            currentUser.setId_usuario(id_usuario);
+            currentUser.setId_usuario(currentUser.getId_usuario());
+            currentUser.setTipo_usuario(currentUser.getTipo_usuario());
             if (!password.isEmpty()) {
-                currentUser.setPassword(password); // Asumiendo que ya encriptas o proteges el password en UserDAO
+                currentUser.setPassword(password);
             }
 
     		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
@@ -61,11 +68,12 @@ public class User_S extends HttpServlet {
     		boolean updated = userDAO.updateUser(currentUser, !password.isEmpty());
 
             if (updated) {
-                session.setAttribute("currentUser", currentUser); // Actualizar sesión
-                response.sendRedirect(request.getContextPath() + "/perfil.jsp?success=true");
+                session.setAttribute("currentUser", currentUser);
+                request.setAttribute("exito", "Perfil actualizado correctamente.");
+                request.getRequestDispatcher("profile.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Hubo un error al actualizar el perfil.");
-                request.getRequestDispatcher("/editarPerfil.jsp").forward(request, response);
+                request.getRequestDispatcher("editProfile.jsp").forward(request, response);
             }
     }
 }

@@ -30,14 +30,15 @@ public class Notification_M implements Notification_I{
 	}
 
 	// Constantes DB
-	public static final String GET_ALL_NOTIFICATIONS = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha FROM notificaciones WHERE flgstate = 1;";
-	public static final String GET_NOTIFICATION_BY_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha, leida FROM notificaciones WHERE id_notificacion = ? AND flgstate = 1;";
-	public static final String CREATE_NOTIFICATION = "INSERT INTO notificaciones (id_usuario_destino, tipo_notificacion, contenido) VALUES (?, ?, ?);";
-	public static final String MARK_AS_READ = "UPDATE notificaciones SET leida = true WHERE id_notificacion = ? AND flgstate = 1;";
-	public static final String DELETE_NOTIFICATION = "UPDATE notificaciones SET flgstate = 0 WHERE id_notificacion = ? AND flgstate = 1;";
-	public static final String GET_NOTIFICATIONS_BY_USER_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha,leida FROM notificaciones WHERE id_usuario_destino = ? AND flgstate = 1;";
-	public static final String GET_UNREAD_NOTIFICATIONS_BY_USER_ID = "SELECT id_notificacion, id_usuario_destino, tipo_notificacion, contenido, fecha, leida FROM notificaciones WHERE id_usuario_destino = ? AND leida = 0 AND flgstate = 1;";
-	public static final String COUNT_UNREAD_NOTIFICATIONS = "SELECT COUNT(*) FROM notificaciones WHERE id_usuario_destino = ? AND leida = 0 AND flgstate = 1;";
+	public static final String GET_ALL_NOTIFICATIONS = "CALL sp_notificacion_get_all()";
+	public static final String GET_NOTIFICATION_BY_ID = "CALL sp_notificacion_get_by_id(?)";
+	public static final String CREATE_NOTIFICATION = "CALL sp_notificacion_create(?, ?, ?)";
+	public static final String MARK_AS_READ = "CALL sp_notificacion_mark_as_read(?)";
+	public static final String DELETE_NOTIFICATION = "CALL sp_notificacion_delete(?)";
+	public static final String GET_NOTIFICATIONS_BY_USER_ID = "CALL sp_notificacion_get_by_user(?)";
+	public static final String GET_UNREAD_NOTIFICATIONS_BY_USER_ID = "CALL sp_notificacion_get_unread_by_user(?)";
+	public static final String COUNT_UNREAD_NOTIFICATIONS = "CALL sp_notificacion_count_unread(?)";
+
 	
 	//------------------------------------------------
 	

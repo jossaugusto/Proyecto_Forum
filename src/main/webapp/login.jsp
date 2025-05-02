@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum - Inicio de sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -34,15 +35,14 @@
             </p>
 
             <div class="mt-3">
-                <c:if test="${not empty requestScope.message}">
+                <c:if test="${not empty message}">
                     <div class="alert alert-danger text-center">
-                        ${requestScope.message}
+                        ${message}
                     </div>
                 </c:if>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

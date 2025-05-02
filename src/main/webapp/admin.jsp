@@ -1,15 +1,19 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Panel de Administración" />
+    <jsp:param name="titulo" value="Panel de Administraciï¿½n" />
 </jsp:include>
 
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="card-title mb-4">¡Bienvenido, ${sessionScope.currentUser.nombre}!</h2>
+            <h2 class="card-title mb-4">Â¡Bienvenido, ${sessionScope.currentUser.nombre}!</h2>
 
             <div class="row mb-4">
-                <!-- Estadísticas -->
+                <!-- Estadï¿½sticas -->
                 <div class="col-md-4">
                     <div class="card text-white bg-primary mb-3">
                         <div class="card-header">Usuarios Registrados</div>
@@ -38,28 +42,24 @@
                 </div>
             </div>
 
-            <!-- Opciones de Administración -->
+            <!-- Opciones de Administraciï¿½n -->
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageUsers" class="btn btn-outline-primary w-100">
+                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageUsers&order=ASC" class="btn btn-outline-primary w-100">
                         <i class="bi bi-people"></i> Gestionar Usuarios
                     </a>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageTopics" class="btn btn-outline-success w-100">
+                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageTopics&order=ASC" class="btn btn-outline-success w-100">
                         <i class="bi bi-tags"></i> Gestionar Temas
                     </a>
                 </div>
                 <div class="col-md-4 mb-3">
                     <a href="${pageContext.request.contextPath}/Admin_S?action=ManageCategories" class="btn btn-outline-warning w-100">
-                        <i class="bi bi-journal-text"></i> Gestionar Categorías
+                        <i class="bi bi-journal-text"></i> Gestionar CategorÃ­as
                     </a>
                 </div>
             </div>
-
-            <c:if test="${not empty message}">
-                <div class="alert alert-info mt-4">${message}</div>
-            </c:if>
 
         </div>
     </div>

@@ -1,12 +1,16 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Registrar Categoría" />
+    <jsp:param name="titulo" value="Registrar CategorÃ­a" />
 </jsp:include>
 
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="card-title mb-4">Registrar Nueva Categoría</h2>
+            <h2 class="card-title mb-4">Registrar Nueva CategorÃ­a</h2>
 
 			<form action="${pageContext.request.contextPath}/Admin_S?action=RegisterCategory" method="post" enctype="multipart/form-data">
 			    <div class="mb-3">
@@ -14,7 +18,7 @@
 			        <input type="text" id="nombre" name="nombre" class="form-control" required>
 			    </div>
 			    <div class="mb-3">
-			        <label for="descripcion" class="form-label">Descripción:</label>
+			        <label for="descripcion" class="form-label">DescripciÃ³n:</label>
 			        <textarea id="descripcion" name="descripcion" class="form-control" required></textarea>
 			    </div>
 			    <div class="mb-3">
@@ -26,7 +30,7 @@
 			            <i class="bi bi-arrow-left-circle"></i> Cancelar
 			        </a>
 			        <button type="submit" class="btn btn-success">
-			            <i class="bi bi-plus-circle"></i> Registrar Categoría
+			            <i class="bi bi-plus-circle"></i> Registrar CategorÃ­a
 			        </button>
 			    </div>
 			</form>

@@ -1,19 +1,37 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Categorías Eliminadas" />
+    <jsp:param name="titulo" value="Categorï¿½as Eliminadas" />
 </jsp:include>
 
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="card-title mb-4">Categorías Eliminadas</h2>
+            <h2 class="card-title mb-4">CategorÃ­as Eliminadas</h2>
 
             <!-- Buscador -->
             <form method="get" action="${pageContext.request.contextPath}/Admin_S" class="row g-3 mb-4">
-                <div class="col-md-10">
-                    <input type="text" name="keyword" class="form-control" placeholder="Buscar por nombre o descripción..." value="${param.keyword}">
+                <div class="col-md-8">
+                    <input type="text" name="keyword" class="form-control" placeholder="Buscar por nombre o descripciÃ³n..." value="${param.keyword}">
                 </div>
+                
+   				<input type="hidden" name="order"
+					value="${order == 'ASC' ? 'DESC' : 'ASC'}" />
+
+				<div class="col-md-2">
+					<button type="submit" name="action" value="ManageDeletedCategories"
+						class="btn btn-outline-secondary w-100">
+						Ordenar:
+						<c:choose>
+							<c:when test="${order == 'DESC'}">â¬† ASC</c:when>
+							<c:otherwise>â¬‡ DESC</c:otherwise>
+						</c:choose>
+					</button>
+				</div>
+                
                 <div class="col-md-2">
                     <button type="submit" name="action" value="ManageDeletedCategories" class="btn btn-primary w-100">
                         <i class="bi bi-search"></i> Buscar
@@ -23,10 +41,10 @@
 
             <!-- Mensaje si no hay resultados -->
             <c:if test="${empty listDeletedCategories}">
-                <div class="alert alert-info">No hay categorías eliminadas.</div>
+                <div class="alert alert-info">No hay categorÃ­as eliminadas.</div>
             </c:if>
 
-            <!-- Tabla de categorías -->
+            <!-- Tabla de categorï¿½as -->
             <c:if test="${not empty listDeletedCategories}">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered">
@@ -34,9 +52,9 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Descripción</th>
+                                <th>DescripciÃ³n</th>
                                 <th>Imagen</th>
-                                <th>Fecha de Creación</th>
+                                <th>Fecha de CreaciÃ³n</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -56,7 +74,7 @@
                                     </td>
                                     <td><fmt:formatDate value="${category.fecha_creacion}" pattern="dd/MM/yyyy HH:mm" /></td>
                                     <td>
-                                        <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreCategory&id_categoria=${category.id_categoria}" 
+                                        <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreCategory&id_category=${category.id_categoria}" 
                                            class="btn btn-sm btn-success">
                                             <i class="bi bi-arrow-counterclockwise"></i> Restaurar
                                         </a>
@@ -68,13 +86,13 @@
                 </div>
             </c:if>
 
-            <!-- Botón para volver -->
+            <!-- Botï¿½n para volver -->
             <div class="mt-4">
                 <a href="${pageContext.request.contextPath}/Admin_S?action=adminPanel" class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle"></i> Volver al Panel
                 </a>
                 <a href="${pageContext.request.contextPath}/Admin_S?action=ManageCategories" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left-circle"></i> Volver a Categorías
+                    <i class="bi bi-arrow-left-circle"></i> Volver a CategorÃ­as
                 </a>
             </div>
         </div>

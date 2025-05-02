@@ -26,6 +26,8 @@ public class Topic_S extends HttpServlet {
     }
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
 		
 		String action = request.getParameter("action");
 		
@@ -36,23 +38,10 @@ public class Topic_S extends HttpServlet {
 			case "newTopic":
 				newTopic(request, response);
 				break;
-			case "viewTopics":
-				viewTopics(request, response);
-				break;
+
 			default:
 				System.out.println("Accion no reconocida");
 		}
-	}
-
-	private void viewTopics(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		String category = request.getParameter("category");
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
-		List<Topic_E> listTopics = topicDAO.getTopicsByCategoryId(Integer.parseInt(category));
-		
-		request.setAttribute("listTopics", listTopics);
-		request.getRequestDispatcher("temasCategoria.jsp").forward(request, response);
 	}
 
 	private void viewTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -91,7 +80,7 @@ public class Topic_S extends HttpServlet {
 			request.setAttribute("topic", topic);
 			request.setAttribute("listRepliesByTopicId", listRepliesByTopicId);
 			request.setAttribute("repliesByParent", repliesByParent);
-			request.getRequestDispatcher("tema.jsp").forward(request, response);
+			request.getRequestDispatcher("topic.jsp").forward(request, response);
 			
 		} else {
 			System.out.println("No se ha encontrado el id del tema");
@@ -117,8 +106,8 @@ public class Topic_S extends HttpServlet {
 		if (result) {
 	        response.sendRedirect("InitialConfi_S");
 	    } else {
-	    	request.setAttribute("message", "Error al crear el tema");
-	    	request.getRequestDispatcher("temaNuevo.jsp").forward(request, response);
+	    	request.setAttribute("error", "Error al crear el tema");
+	    	request.getRequestDispatcher("newTopic.jsp").forward(request, response);
 	    }
 	}
 

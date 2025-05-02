@@ -27,7 +27,10 @@ public class Reply_S extends HttpServlet {
     }
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			String action = request.getParameter("action");
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		
+		String action = request.getParameter("action");
 		
 		switch (action) {
 			case "newReply":

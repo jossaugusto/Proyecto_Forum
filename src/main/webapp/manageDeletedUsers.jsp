@@ -1,4 +1,8 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
     <jsp:param name="titulo" value="Gestionar Usuarios" />
 </jsp:include>
@@ -10,9 +14,22 @@
 
             <!-- Buscador -->
             <form method="get" action="${pageContext.request.contextPath}/Admin_S" class="row g-3 mb-4">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <input type="text" name="keyword" class="form-control" placeholder="Buscar por nombre, apellido, rol o email..." value="${param.keyword}">
                 </div>
+                
+                			    <input type="hidden" name="order" value="${order == 'ASC' ? 'DESC' : 'ASC'}" />
+			
+			    <div class="col-md-2">
+			        <button type="submit" name="action" value="ManageDeletedUsers" class="btn btn-outline-secondary w-100">
+			            Ordenar: 
+			            <c:choose>
+			                <c:when test="${order == 'DESC'}">â¬† ASC</c:when>
+			                <c:otherwise>â¬‡ DESC</c:otherwise>
+			            </c:choose>
+			        </button>
+			    </div>
+                
                 <div class="col-md-2">
                     <button type="submit" name="action" value="ManageDeletedUsers" class="btn btn-primary w-100">
                         <i class="bi bi-search"></i> Buscar
@@ -31,24 +48,24 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre Completo</th>
-                                <th>Correo Electrónico</th>
+                                <th>Correo ElectrÃ³nico</th>
                                 <th>Rol</th>
                                 <th>Fecha de Registro</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="usuario" items="${listDeletedUsers}">
+                            <c:forEach var="user" items="${listDeletedUsers}">
                                 <tr>
-                                    <td>${usuario.id_usuario}</td>
-                                    <td>${usuario.nombre} ${usuario.apellido}</td>
-                                    <td>${usuario.email}</td>
-                                    <td>${usuario.tipo_usuario}</td>
-                                    <td>${usuario.fecha_registro}</td>
+                                    <td>${user.id_usuario}</td>
+                                    <td>${user.nombre} ${user.apellido}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.tipo_usuario}</td>
+                                    <td>${user.fecha_registro}</td>
                                     <td>
-                                        <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreUser&id_usuario=${usuario.id_usuario}" 
+                                        <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreUser&id_user=${user.id_usuario}" 
                                            class="btn btn-sm btn-warning me-1"
-                                           onclick="return confirm('¿Estás seguro de restaurar este usuario?');">
+                                           onclick="return confirm('Â¿EstÃ¡s seguro de restaurar este usuario?');">
                                             <i class="bi bi-pencil-square"></i> Resturar
                                         </a>
                                     </td>

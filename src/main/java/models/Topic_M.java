@@ -11,59 +11,67 @@ import entitys.Topic_E;
 import interfaces.Topic_I;
 
 public class Topic_M implements Topic_I{
+	// Variables globales
+	Connection con = null;
+	PreparedStatement ps = null;
+	ResultSet rs = null;
 	
-	public static final String GET_ALL_TOPICS = "SELECT  t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE t.flgstate = 1\r\n"
-			+ "ORDER BY id_tema DESC;";
-	public static final String GET_ALL_DELETED_TOPICS = "SELECT  t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE t.flgstate = 0\r\n"
-			+ "ORDER BY id_tema DESC;";
-	public static final String GET_TOPIC_BY_ID= "SELECT  t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE t.id_tema = ? AND t.flgstate = 1;";
-	public static final String CREATE_TOPIC = "INSERT INTO temas (titulo, contenido, id_usuario, id_categoria) VALUES (?,?,?,?);";
-	public static final String UPDATE_TOPIC = "UPDATE temas SET titulo = ?, contenido = ?, id_categoria = ?, estado = ? WHERE id_tema = ?;";
-	public static final String DELETE_USER = "UPDATE temas SET flgstate = 0 WHERE id_tema = ?;";
-	public static final String RESTORE_USER = "UPDATE temas SET flgstate = 1 WHERE id_tema = ?;";
-	public static final String GET_TOPICS_BY_CATEGORY_ID = "SELECT t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE t.id_categoria = ? AND t.flgstate = 1;";
-	public static final String GET_TOPICS_BY_USER_ID = "SELECT t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE t.id_usuario = ? and t.flgstate = 1;";
-	public static final String GET_TOPICS_BY_SEARCH = "SELECT t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE (t.titulo LIKE ? OR t.contenido LIKE ? OR c.nombre LIKE ? OR t.estado LIKE ? OR u.nombre LIKE ? OR u.apellido LIKE ?) AND t.flgstate = 1;";
-	public static final String GET_DELETED_TOPICS_BY_SEARCH = "SELECT t.id_tema, t.titulo, t.contenido, t.id_usuario, t.id_categoria, t.fecha_publicacion, t.estado, t.vistas, u.nombre as nombreUsuario, u.apellido as apellidoUsuario, c.nombre as nombreCategoria\r\n"
-			+ "FROM temas t\r\n"
-			+ "INNER JOIN usuarios u ON t.id_usuario = u.id_usuario\r\n"
-			+ "INNER JOIN categorias c ON t.id_categoria = c.id_categoria\r\n"
-			+ "WHERE (t.titulo LIKE ? OR t.contenido LIKE ? OR c.nombre LIKE ? OR t.estado LIKE ? OR u.nombre LIKE ? OR u.apellido LIKE ?) AND t.flgstate = 0;";
-	public static final String COUNT_TOPICS = "SELECT COUNT(*) FROM temas WHERE flgstate = 1;";
+	// Metodo para Exception y finalizar la conexion
+	void closeResources(Connection con, PreparedStatement ps, ResultSet rs, Exception e, String txt) {
+	    System.out.println("Error getting all"+ txt +">>> " + e.getMessage());
+	    try {
+	        if (rs != null) rs.close();
+	        if (ps != null) ps.close();
+	        if (con != null) con.close();
+	    } catch (Exception ex) {
+	        System.out.println("Error closing resources >>> " + ex.getMessage());
+	    }
+	}
+	
+    public static final String GET_ALL_TOPICS = "CALL sp_tema_get_all(?)";
+    public static final String GET_TOPICS_BY_SEARCH = "CALL sp_tema_search(?, ?)";
+    
+    public static final String GET_ALL_DELETED_TOPICS = "CALL sp_tema_get_all_deleted(?)";
+    public static final String GET_DELETED_TOPICS_BY_SEARCH = "CALL sp_tema_search_deleted(?,?)";
+    
+    public static final String GET_TOPIC_BY_ID = "CALL sp_tema_get_by_id(?)";
+    
+    public static final String CREATE_TOPIC = "CALL sp_tema_create(?,?,?,?)";
+    public static final String UPDATE_TOPIC = "CALL sp_tema_update(?,?,?,?,?)";
+    public static final String DELETE_USER = "CALL sp_tema_delete(?)";
+    public static final String RESTORE_USER = "CALL sp_tema_restore(?)";
+    
+    public static final String GET_TOPICS_BY_CATEGORY_ID = "CALL sp_tema_get_by_category(?)";
+    public static final String GET_TOPICS_BY_USER_ID = "CALL sp_tema_get_by_user(?)";
+    
+    public static final String COUNT_TOPICS = "CALL sp_tema_count()";
 	
 	// Ready
 	@Override
-	public List<Topic_E> getAllTopics() {
+	public List<Topic_E> getAllTopics(String keyword, String order) {
+		String sql = "";
+		if (keyword != null && !keyword.isEmpty()) {
+			sql = GET_TOPICS_BY_SEARCH;
+		} else {
+			// Validar que el parámetro "order" sea uno de los valores válidos (ASC o DESC)
+	        if (!order.equalsIgnoreCase("ASC") && !order.equalsIgnoreCase("DESC")) {
+	            throw new IllegalArgumentException("El orden debe ser 'ASC' o 'DESC'.");
+	        }
+			sql = GET_ALL_TOPICS;
+		}
+		
 		List<Topic_E> listTopics = new ArrayList<Topic_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		try {
+			
 			con = MySQLConnection.getConexion();
-			ps = con.prepareStatement(GET_ALL_TOPICS);
+			ps = con.prepareStatement(sql);
+			
+			if (keyword != null && !keyword.isEmpty()) {
+				ps.setString(1, keyword);
+				ps.setString(2, order);
+			} else {
+				ps.setString(1, order);
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Topic_E topic = new Topic_E();
@@ -81,87 +89,37 @@ public class Topic_M implements Topic_I{
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting all topics>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "getAllTopics");
 		}
 		return listTopics;
 	}
 
 	@Override
-	public List<Topic_E> getAllDeletedTopics() {
+	public List<Topic_E> getAllDeletedTopics(String keyword, String order) {
+		String sql = "";
+		
+		if (keyword != null && !keyword.isEmpty()) {
+			sql = GET_DELETED_TOPICS_BY_SEARCH;
+		} else {
+			// Validar que el parámetro "order" sea uno de los valores válidos (ASC o DESC)
+	        if (!order.equalsIgnoreCase("ASC") && !order.equalsIgnoreCase("DESC")) {
+	            throw new IllegalArgumentException("El orden debe ser 'ASC' o 'DESC'.");
+	        }
+			sql = GET_ALL_DELETED_TOPICS;
+		}
+		
 		List<Topic_E> listTopics = new ArrayList<Topic_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		
 		try {
 			con = MySQLConnection.getConexion();
-			ps = con.prepareStatement(GET_ALL_DELETED_TOPICS);
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				Topic_E topic = new Topic_E();
-				topic.setId_tema(rs.getInt("id_tema"));
-				topic.setTitulo(rs.getString("titulo"));
-				topic.setContenido(rs.getString("contenido"));
-				topic.setId_usuario(rs.getInt("id_usuario"));
-				topic.setId_categoria(rs.getInt("id_categoria"));
-				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
-				topic.setEstado(rs.getString("estado"));
-				topic.setVistas(rs.getInt("vistas"));
-				topic.setNombreUsuario(rs.getString("nombreUsuario"));
-				topic.setApellidoUsuario(rs.getString("apellidoUsuario"));
-				topic.setNombreCategoria(rs.getString("nombreCategoria"));
-				listTopics.add(topic);
-			}
-		} catch (Exception e) {
-			System.out.println("Error getting all deleted topics>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
-		}
-		return listTopics;
-	}
-	
-	@Override
-	public List<Topic_E> getAllTopicsBySearch(String keyword) {
-	    List<Topic_E> listTopics = new ArrayList<Topic_E>();
-	    Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			con = MySQLConnection.getConexion();
-			ps = con.prepareStatement(GET_TOPICS_BY_SEARCH);
-			String searchKeyword = "%" + keyword + "%";
-			ps.setString(1, searchKeyword);
-			ps.setString(2, searchKeyword);
-			ps.setString(3, searchKeyword);
-			ps.setString(4, searchKeyword);
-			ps.setString(5, searchKeyword);
-			ps.setString(6, searchKeyword);
+			ps = con.prepareStatement(sql);
 			
+			if (keyword != null && !keyword.isEmpty()) {
+				ps.setString(1, keyword);
+				ps.setString(2, order);
+			} else {
+				ps.setString(1, order);
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Topic_E topic = new Topic_E();
@@ -179,74 +137,7 @@ public class Topic_M implements Topic_I{
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting all users>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
-		}
-		return listTopics;
-	}
-	
-	@Override
-	public List<Topic_E> getAllDeletedTopicsBySearch(String keyword) {
-	    List<Topic_E> listTopics = new ArrayList<Topic_E>();
-	    Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		try {
-			con = MySQLConnection.getConexion();
-			ps = con.prepareStatement(GET_DELETED_TOPICS_BY_SEARCH);
-			String searchKeyword = "%" + keyword + "%";
-			ps.setString(1, searchKeyword);
-			ps.setString(2, searchKeyword);
-			ps.setString(3, searchKeyword);
-			ps.setString(4, searchKeyword);
-			ps.setString(5, searchKeyword);
-			ps.setString(6, searchKeyword);
-			
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				Topic_E topic = new Topic_E();
-				topic.setId_tema(rs.getInt("id_tema"));
-				topic.setTitulo(rs.getString("titulo"));
-				topic.setContenido(rs.getString("contenido"));
-				topic.setId_usuario(rs.getInt("id_usuario"));
-				topic.setId_categoria(rs.getInt("id_categoria"));
-				topic.setFecha_publicacion(rs.getTimestamp("fecha_publicacion"));
-				topic.setEstado(rs.getString("estado"));
-				topic.setVistas(rs.getInt("vistas"));
-				topic.setNombreUsuario(rs.getString("nombreUsuario"));
-				topic.setApellidoUsuario(rs.getString("apellidoUsuario"));
-				topic.setNombreCategoria(rs.getString("nombreCategoria"));
-				listTopics.add(topic);
-			}
-		} catch (Exception e) {
-			System.out.println("Error getting all users>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e , "getAllDeletedTopics");
 		}
 		return listTopics;
 	}
@@ -255,14 +146,11 @@ public class Topic_M implements Topic_I{
 	@Override
 	public Topic_E getTopicById(int id) {
 		Topic_E topic = null;
-		Connection cn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 
 		try {
 
-			cn = MySQLConnection.getConexion();
-			ps = cn.prepareStatement(GET_TOPIC_BY_ID);
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(GET_TOPIC_BY_ID);
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -280,16 +168,7 @@ public class Topic_M implements Topic_I{
 				topic.setNombreCategoria(rs.getString("nombreCategoria"));
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting topic>>>" + e.getMessage());
-		} finally {
-			try {
-				if (ps != null)
-					ps.close();
-				if (cn != null)
-					cn.close();
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e , "getTopicById");
 		}
 		return topic;
 	}
@@ -298,8 +177,6 @@ public class Topic_M implements Topic_I{
 	@Override
 	public boolean createTopic(Topic_E topic) {
 		boolean result = false;
-		Connection con = null;
-		PreparedStatement ps = null;
 
 		try {
 			System.out.println("Entrando a crear tema");
@@ -321,18 +198,7 @@ public class Topic_M implements Topic_I{
 				result = true;
 			}
 		} catch (Exception e) {
-			System.out.println("Error creating topic>>> " + e.getMessage());
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "createTopic");
 		}
 		return result;
 	}
@@ -341,34 +207,22 @@ public class Topic_M implements Topic_I{
 	@Override
 	public boolean updateTopic(Topic_E topic) {
 		boolean result = false;
-		Connection con = null;
-		PreparedStatement ps = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(UPDATE_TOPIC);
-			ps.setString(1, topic.getTitulo());
-			ps.setString(2, topic.getContenido());
-			ps.setInt(3, topic.getId_categoria());
-			ps.setString(4, topic.getEstado());
-			ps.setInt(5, topic.getId_tema());
+			ps.setInt(1, topic.getId_tema());
+			ps.setString(2, topic.getTitulo());
+			ps.setString(3, topic.getContenido());
+			ps.setInt(4, topic.getId_categoria());
+			ps.setString(5, topic.getEstado());
 
 			int value = ps.executeUpdate();
 			if (value > 0) {
 				result = true;
 			}
 		} catch (Exception e) {
-			System.out.println("Error updating user>>> " + e.getMessage());
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "updateTopic");
 		}
 		return result;
 	}
@@ -377,22 +231,14 @@ public class Topic_M implements Topic_I{
 	@Override
 	public boolean deleteTopic(int id) {
 		boolean success = false;
-        Connection cn = null;
-        PreparedStatement psm = null;
+
         try {
-            cn = MySQLConnection.getConexion();
-            psm = cn.prepareStatement(DELETE_USER);
-            psm.setInt(1, id);
-            success = psm.executeUpdate() > 0;
+            con = MySQLConnection.getConexion();
+            ps = con.prepareStatement(DELETE_USER);
+            ps.setInt(1, id);
+            success = ps.executeUpdate() > 0;
         } catch (Exception e) {
-			System.out.println("Error deleting user>>>" + e.getMessage());
-        } finally {
-            try {
-                if (psm != null) psm.close();
-                if (cn != null) cn.close();
-            } catch (Exception e) {
-            	System.out.println("Error closing resources>>> " + e.getMessage());
-            }
+			closeResources(con, ps, rs, e, "deleteTopic");
         }
         return success;
 	}
@@ -400,22 +246,14 @@ public class Topic_M implements Topic_I{
 	@Override
 	public boolean restoreTopic(int id) {
 		boolean success = false;
-        Connection cn = null;
-        PreparedStatement psm = null;
+
         try {
-            cn = MySQLConnection.getConexion();
-            psm = cn.prepareStatement(RESTORE_USER);
-            psm.setInt(1, id);
-            success = psm.executeUpdate() > 0;
+            con = MySQLConnection.getConexion();
+            ps = con.prepareStatement(RESTORE_USER);
+            ps.setInt(1, id);
+            success = ps.executeUpdate() > 0;
         } catch (Exception e) {
-			System.out.println("Error deleting user>>>" + e.getMessage());
-        } finally {
-            try {
-                if (psm != null) psm.close();
-                if (cn != null) cn.close();
-            } catch (Exception e) {
-            	System.out.println("Error closing resources>>> " + e.getMessage());
-            }
+			closeResources(con, ps, rs, e, "restoreTopic");
         }
         return success;
 	}
@@ -424,9 +262,7 @@ public class Topic_M implements Topic_I{
 	@Override
 	public List<Topic_E> getTopicsByCategoryId(int categoryId) {
 		List<Topic_E> listTopics = new ArrayList<Topic_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_TOPICS_BY_CATEGORY_ID);
@@ -448,21 +284,7 @@ public class Topic_M implements Topic_I{
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting topics by category ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "getTopicsByCategoryId");
 		}
 		return listTopics;
 	}
@@ -471,9 +293,7 @@ public class Topic_M implements Topic_I{
 	@Override
 	public List<Topic_E> getTopicsByUserId(int userId) {
 		List<Topic_E> listTopics = new ArrayList<Topic_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_TOPICS_BY_USER_ID);
@@ -493,55 +313,25 @@ public class Topic_M implements Topic_I{
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting topics by category ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "getTopicsByUserId");
 		}
 		return listTopics;
 	}
 
 	public void updateTopicViews(int id_tema) {
-		Connection con = null;
-		PreparedStatement ps = null;
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement("UPDATE temas SET vistas = vistas + 1 WHERE id_tema = ?;");
 			ps.setInt(1, id_tema);
 			ps.executeUpdate();
 		} catch (Exception e) {
-			System.out.println("Error updating views>>> " + e.getMessage());
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "updateTopicViews");
 		}
 	}
 
 	@Override
 	public int countTopics() {
 		int count = 0;
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(COUNT_TOPICS);
@@ -550,21 +340,7 @@ public class Topic_M implements Topic_I{
 				count = rs.getInt(1);
 			}
 		} catch (Exception e) {
-			System.out.println("Error counting topics>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e, "countTopics");
 		}
 		return count;
 	}

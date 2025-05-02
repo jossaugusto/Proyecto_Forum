@@ -9,10 +9,12 @@
     <title>Foro Académico - ${param.titulo}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-   	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
@@ -31,7 +33,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/Category_S?action=viewCategories">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/categories.jsp">
                             <i class="bi bi-folder2-open"></i> Categorías
                         </a>
                     </li>
@@ -45,7 +47,7 @@
                                     <i class="bi bi-person-circle"></i> ${sessionScope.currentUser.nombre}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/perfil.jsp">
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile.jsp">
                                         <i class="bi bi-person-lines-fill"></i> Mi Perfil</a></li>
                                     <c:if test="${sessionScope.currentUser.tipo_usuario == 'admin'}">
                                         <li><a class="dropdown-item" href="${pageContext.request.contextPath}/Admin_S?action=adminPanel">

@@ -8,15 +8,9 @@ public interface User_I {
 	// CRUD operations
 	
 	// List all users
-	List<User_E> getAllUsers();
+	List<User_E> getAllUsers(String keyword,String order);
 	
-	List<User_E> getAllUsers(String rol);
-	
-	List<User_E> getAllDeletedUsers();
-	
-	List<User_E> getAllUsersBySearch(String keyword);
-	
-	List<User_E> getAllDeletedUsersBySearch(String keyword);
+	List<User_E> getAllDeletedUsers(String keyword, String order);
 	
 	// Get user by ID
 	User_E getUserById(int id);

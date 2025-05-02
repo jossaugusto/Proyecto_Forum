@@ -1,5 +1,8 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <jsp:include page="header.jsp">
     <jsp:param name="titulo" value="Temas eliminados" />
 </jsp:include>
@@ -11,9 +14,24 @@
 
             <!-- Buscador -->
             <form method="get" action="${pageContext.request.contextPath}/Admin_S" class="row g-3 mb-4">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <input type="text" name="keyword" class="form-control" placeholder="Buscar por titulo, contenido ,categoria, estado o autor..." value="${param.keyword}">
                 </div>
+                
+                <input type="hidden" name="order"
+					value="${order == 'ASC' ? 'DESC' : 'ASC'}" />
+
+				<div class="col-md-2">
+					<button type="submit" name="action" value="ManageDeletedTopics"
+						class="btn btn-outline-secondary w-100">
+						Ordenar:
+						<c:choose>
+							<c:when test="${order == 'DESC'}">⬆ ASC</c:when>
+							<c:otherwise>⬇ DESC</c:otherwise>
+						</c:choose>
+					</button>
+				</div>
+                
                 <div class="col-md-2">
                     <button type="submit" name="action" value="ManageDeletedTopics" class="btn btn-primary w-100">
                         <i class="bi bi-search"></i> Buscar
@@ -22,7 +40,7 @@
             </form>
 
             <c:if test="${empty listDeletedTopics}">
-                <div class="alert alert-info">No hay usuarios registrados.</div>
+                <div class="alert alert-info">No hay temas eliminados.</div>
             </c:if>
 
             <c:if test="${not empty listDeletedTopics}">
@@ -32,28 +50,28 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Autor</th>
-                                <th>Titulo</th>
+                                <th>Título</th>
                                 <th>Contenido</th>
-                                <th>Categoria</th>
-                                <th>Fecha de Publicacion</th>
+                                <th>Categoría</th>
+                                <th>Fecha de Publicación</th>
                                 <th>Vistas</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="tema" items="${listDeletedTopics}">
+                            <c:forEach var="topic" items="${listDeletedTopics}">
                                 <tr>
-                                    <td>${tema.id_tema}</td>
-                                    <td>${tema.nombreUsuario} ${tema.apellidoUsuario}</td>
-                                    <td>${tema.titulo}</td>
-                                    <td>${tema.contenido}</td>
-                                    <td>${tema.nombreCategoria}</td>
-                                    <td><fmt:formatDate value="${tema.fecha_publicacion}" pattern="dd/MM/yyyy HH:mm" /></td>
-                                    <td>${tema.vistas}</td>
+                                    <td>${topic.id_tema}</td>
+                                    <td>${topic.nombreUsuario} ${topic.apellidoUsuario}</td>
+                                    <td>${topic.titulo}</td>
+                                    <td>${topic.contenido}</td>
+                                    <td>${topic.nombreCategoria}</td>
+                                    <td><fmt:formatDate value="${topic.fecha_publicacion}" pattern="dd/MM/yyyy HH:mm" /></td>
+                                    <td>${topic.vistas}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${tema.estado == 'activo'}">
+                                            <c:when test="${topic.estado == 'activo'}">
                                                 <span class="badge bg-success">Activo</span>
                                             </c:when>
                                             <c:otherwise>
@@ -63,9 +81,9 @@
                                     </td>
                                     
                                     <td>
-                                        <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreTopic&id_tema=${tema.id_tema}" 
+                                        <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreTopic&id_topic=${topic.id_tema}" 
                                            class="btn btn-sm btn-danger" 
-                                           onclick="return confirm('�Est�s seguro de restaurar este tema?');">
+                                           onclick="return confirm('¿Estás seguro de restaurar este tema?');">
                                             <i class="bi bi-trash"></i> Restaurar
                                         </a>
                                     </td>

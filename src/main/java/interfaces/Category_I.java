@@ -8,13 +8,9 @@ public interface Category_I {
 	// CRUD operations
 	
 	// List all categories
-	List<Category_E> getAllCategories();
+	List<Category_E> getAllCategories(String keyword, String order);
 	
-	List<Category_E> getAllDeletedCategories();
-	
-	List<Category_E> getAllCategoriesBySearch(String keyword);
-	
-	List<Category_E> getAllDeletedCategoriesBySearch(String keyword);
+	List<Category_E> getAllDeletedCategories(String keyword, String order);
 	
 	// Get category by ID
 	Category_E getCategoryById(int id);

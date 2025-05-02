@@ -12,39 +12,43 @@ import interfaces.Reply_I;
 
 public class Reply_M implements Reply_I{
 
-	// CRUD operations
-	public static final String GET_ALL_REPLIES = "SELECT * FROM respuestas WHERE flgstate = 1;";
-	public static final String GET_REPLY_BY_ID= "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_respuesta = ? and flgstate = 1;";
-	public static final String CREATE_REPLY = "INSERT INTO respuestas (id_tema, id_usuario, contenido) VALUES (?,?,?);";
-	public static final String CREATE__SUB_REPLY = "INSERT INTO respuestas (id_tema, id_usuario,contenido, id_respuesta_padre) VALUES (?,?,?,?);";
+	// Variables globales
+	Connection con = null;
+	PreparedStatement ps = null;
+	ResultSet rs = null;
 	
-	public static final String UPDATE_REPLY = "UPDATE respuestas SET id_tema = ?, id_usuario = ?, contenido = ? WHERE id_respuesta = ?;";
-	public static final String DELETE_REPLY = "UPDATE respuestas SET flgstate = 0 WHERE id_respuesta = ?;";
-	public static final String GET_REPLIES_BY_TOPIC_ID = "SELECT\r\n"
-			+ "r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
-			+ "FROM respuestas r\r\n"
-			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
-			+ "WHERE r.id_tema = ? AND r.flgstate = 1";
-	public static final String GET_REPLIES_BY_TOPIC_ID_AND_PARENT_ID_NOT_NULL = "SELECT\r\n"
-			+ "r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
-			+ "FROM respuestas r\r\n"
-			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
-			+ "WHERE r.id_tema = ? AND r.flgstate = 1  AND r.id_respuesta_padre IS NOT NULL;";
-	public static final String GET_REPLIES_BY_USER_ID = "SELECT id_respuesta, id_tema, id_usuario, contenido, fecha_publicacion, es_respuesta_aceptada, id_respuesta_padre FROM respuestas WHERE id_usuario = ? and flgstate = 1;";
-	public static final String GET_QUANTITY_REPLY_BY_TOPIC_ID = "SELECT COUNT(*) as cantidad FROM respuestas WHERE id_tema = ?;";
-	public static final String GET_REPLIES_BY_PARENT_ID = "SELECT r.id_respuesta, r.id_tema, r.id_usuario, r.contenido, r.fecha_publicacion, r.es_respuesta_aceptada, r.id_respuesta_padre, u.nombre as nombreUsuario, u.apellido as apellidoUsuario\r\n"
-			+ "FROM respuestas r\r\n"
-			+ "INNER JOIN usuarios u ON r.id_usuario = u.id_usuario\r\n"
-			+ "WHERE r.id_respuesta_padre = ? AND r.flgstate = 1;";
-	public static final String COUNT_REPLIES = "SELECT COUNT(*) FROM respuestas WHERE flgstate = 1;";
+	// Metodo para Exception y finalizar la conexion
+	void closeResources(Connection con, PreparedStatement ps, ResultSet rs, Exception e) {
+	    System.out.println("Error getting all replies>>> " + e.getMessage());
+	    try {
+	        if (rs != null) rs.close();
+	        if (ps != null) ps.close();
+	        if (con != null) con.close();
+	    } catch (Exception ex) {
+	        System.out.println("Error closing resources >>> " + ex.getMessage());
+	    }
+	}
+	
+	// CRUD operations
+	public static final String GET_ALL_REPLIES = "CALL sp_respuesta_get_all()";
+	public static final String GET_REPLY_BY_ID = "CALL sp_respuesta_get_by_id(?)";
+	public static final String CREATE_REPLY = "CALL sp_respuesta_create(?, ?, ?)";
+	public static final String CREATE_SUB_REPLY = "CALL sp_respuesta_create_sub(?, ?, ?, ?)";
+	public static final String UPDATE_REPLY = "CALL sp_respuesta_update(?, ?, ?, ?)";
+	public static final String DELETE_REPLY = "CALL sp_respuesta_delete(?)";
+	public static final String GET_REPLIES_BY_TOPIC_ID = "CALL sp_respuesta_get_by_topic_id(?)";
+	public static final String GET_REPLIES_BY_TOPIC_ID_AND_PARENT_ID_NOT_NULL = "CALL sp_respuesta_get_by_topic_id_and_with_parent(?)";
+	public static final String GET_REPLIES_BY_USER_ID = "CALL sp_respuesta_get_by_user_id(?)";
+	public static final String GET_QUANTITY_REPLY_BY_TOPIC_ID = "CALL sp_respuesta_get_quantity_by_topic(?)";
+	public static final String GET_REPLIES_BY_PARENT_ID = "CALL sp_respuesta_get_by_parent_id(?)";
+	public static final String COUNT_REPLIES = "CALL sp_respuesta_count_all()";
+
 	
 	// Ready
 	@Override
 	public List<Reply_E> getAllReplies() {
 		List<Reply_E> listReplies = new ArrayList<Reply_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_ALL_REPLIES);
@@ -61,21 +65,7 @@ public class Reply_M implements Reply_I{
 				listReplies.add(reply);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting all replies>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		
 		return listReplies;
@@ -85,9 +75,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public Reply_E getReplyById(int id) {
 		Reply_E reply = null;
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_REPLY_BY_ID);
@@ -104,21 +92,7 @@ public class Reply_M implements Reply_I{
 				reply.setId_respuesta_padre(rs.getInt("id_respuesta_padre"));
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting reply by ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		return reply;
 	}
@@ -127,8 +101,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public boolean createReply(Reply_E reply) {
 		boolean result = false;
-		Connection con = null;
-		PreparedStatement ps = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(CREATE_REPLY);
@@ -140,19 +113,8 @@ public class Reply_M implements Reply_I{
 			
 			if (rowsAffected > 0) result = true;
 		} catch (Exception e) {
-			System.out.println("Error creating reply>>> " + e.getMessage());
+			closeResources(con, ps, rs, e);
 			return false;
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
 		}
 		return result;
 	}
@@ -161,8 +123,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public boolean updateReply(Reply_E reply) {
 		boolean result = false;
-		Connection con = null;
-		PreparedStatement ps = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(UPDATE_REPLY);
@@ -175,19 +136,7 @@ public class Reply_M implements Reply_I{
 			
 			if (rowsAffected > 0) result = true;
 		} catch (Exception e) {
-			System.out.println("Error updating reply>>> " + e.getMessage());
-			return false;
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		return result;
 	}
@@ -196,8 +145,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public boolean deleteReply(int id) {
 		boolean result = false;
-		Connection con = null;
-		PreparedStatement ps = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(DELETE_REPLY);
@@ -207,19 +155,7 @@ public class Reply_M implements Reply_I{
 			
 			if (rowsAffected > 0) result = true;
 		} catch (Exception e) {
-			System.out.println("Error deleting reply>>> " + e.getMessage());
-			return false;
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		return result;
 	}
@@ -228,9 +164,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public List<Reply_E> getRepliesByTopicId(int topicId) {
 		List<Reply_E> listReplies = new ArrayList<Reply_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_REPLIES_BY_TOPIC_ID);
@@ -250,21 +184,7 @@ public class Reply_M implements Reply_I{
 				listReplies.add(reply);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting replies by topic ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		return listReplies;
 	}
@@ -273,9 +193,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public List<Reply_E> getRepliesByUserId(int userId) {
 		List<Reply_E> listReplies = new ArrayList<Reply_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_REPLIES_BY_USER_ID);
@@ -293,31 +211,15 @@ public class Reply_M implements Reply_I{
 				listReplies.add(reply);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting replies by user ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
-		}
+			closeResources(con, ps, rs, e);
+		} 
 		return listReplies;
 	}
 	
 	@Override
 	public int getQuantityReplyByTopicId(int id_tema) {
 		int cantidad = 0;
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_QUANTITY_REPLY_BY_TOPIC_ID);
@@ -327,22 +229,8 @@ public class Reply_M implements Reply_I{
 				cantidad = rs.getInt("cantidad");
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting quantity of replies by topic ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
-		}
+			closeResources(con, ps, rs, e);
+		} 
 		return cantidad;
 	}
 
@@ -350,9 +238,7 @@ public class Reply_M implements Reply_I{
 	@Override
 	public List<Reply_E> getRepliesByParentId(int parentId) {
 		List<Reply_E> listReplies = new ArrayList<Reply_E>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(GET_REPLIES_BY_PARENT_ID);
@@ -372,21 +258,7 @@ public class Reply_M implements Reply_I{
 				listReplies.add(reply);
 			}
 		} catch (Exception e) {
-			System.out.println("Error getting replies by parent ID>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		return listReplies;
 	}
@@ -394,11 +266,9 @@ public class Reply_M implements Reply_I{
 	@Override
 	public boolean createSubReply(Reply_E reply) {
 		boolean result = false;
-		Connection con = null;
-		PreparedStatement ps = null;
 		try {
 			con = MySQLConnection.getConexion();
-			ps = con.prepareStatement(CREATE__SUB_REPLY);
+			ps = con.prepareStatement(CREATE_SUB_REPLY);
 			ps.setInt(1, reply.getId_tema());
 			ps.setInt(2, reply.getId_usuario());
 			ps.setString(3, reply.getContenido());
@@ -408,19 +278,8 @@ public class Reply_M implements Reply_I{
 			
 			if (rowsAffected > 0) result = true;
 		} catch (Exception e) {
-			System.out.println("Error creating sub-reply>>> " + e.getMessage());
+			closeResources(con, ps, rs, e);
 			return false;
-		} finally {
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
 		}
 		return result;
 	}
@@ -428,9 +287,6 @@ public class Reply_M implements Reply_I{
 	@Override
 	public int countReplies() {
 		int count = 0;
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		try {
 			con = MySQLConnection.getConexion();
 			ps = con.prepareStatement(COUNT_REPLIES);
@@ -439,21 +295,7 @@ public class Reply_M implements Reply_I{
 				count = rs.getInt(1);
 			}
 		} catch (Exception e) {
-			System.out.println("Error counting replies>>> " + e.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-				if (con != null) {
-					con.close();
-				}
-			} catch (Exception e) {
-				System.out.println("Error closing resources>>> " + e.getMessage());
-			}
+			closeResources(con, ps, rs, e);
 		}
 		return count;
 	}
