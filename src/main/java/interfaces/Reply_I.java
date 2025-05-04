@@ -42,4 +42,7 @@ public interface Reply_I {
 	
 	// Get the number of replies
 	int countReplies();
+	
+	// Update vote
+	boolean acceptedReply(int idReply, boolean accepted);
 }

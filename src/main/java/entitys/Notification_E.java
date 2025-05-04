@@ -40,7 +40,7 @@ public class Notification_E {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public boolean isLeida() {
+	public boolean getLeida() {
 		return leida;
 	}
 	public void setLeida(boolean leida) {

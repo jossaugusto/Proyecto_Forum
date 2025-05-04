@@ -185,6 +185,7 @@ public class User_M implements User_I {
 				user.setEmail(rs.getString("email"));
 				user.setTipo_usuario(rs.getString("tipo_usuario"));
 				user.setFecha_registro(rs.getTimestamp("fecha_registro"));
+				user.setFlgstate(rs.getInt("flgstate"));
 			}
 		} catch (Exception e) {
 			closeResources(con, ps, rs, e, "getUserByEmail");

@@ -8,35 +8,38 @@
 </jsp:include>
 
 <div class="container mt-4">
-    <h2>Temas disponibles en la categoría: ${category}</h2>
+    <h2>Temas disponibles en la categoría: <strong>${category}</strong></h2>
 
     <c:choose>
         <c:when test="${not empty listTopicsByCategoryId}">
             <div class="list-group">
                 <c:forEach var="tema" items="${listTopicsByCategoryId}">
-                    <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopic&id_tema=${tema.id_tema}" 
-                       class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
+                    <a href="${pageContext.request.contextPath}/Topic_S?action=viewTopic&id_tema=${tema.id_tema}" class="list-group-item list-group-item-action mb-2 border rounded card shadow-sm border-0 topic-card-hover">
+                        <div>
                             <h5 class="mb-1">${tema.titulo}</h5>
-                            <small><fmt:formatDate value="${tema.fecha_publicacion}" pattern="dd MMM yyyy HH:mm" /></small>
+                            <small class="text-muted"><fmt:formatDate value="${tema.fecha_publicacion}" pattern="dd MMM HH:mm" /></small>
                         </div>
                         <p class="mb-1">${tema.contenido}</p>
-                        <small>
+                        <small class="text-muted">
                             Por: ${tema.nombreUsuario} ${tema.apellidoUsuario} |
-                            Categoría: ${tema.nombreCategoria}
+                            Categoría: <span class="badge bg-secondary">${tema.nombreCategoria}</span>
                         </small>
                     </a>
                 </c:forEach>
             </div>
-            
         </c:when>
         <c:otherwise>
-            <div class="alert alert-info mt-3">No hay temas disponibles para esta categoría.</div>
-            <c:if test="${not empty sessionScope.currentUser}">
-                <a href="${pageContext.request.contextPath}/Category_S?action=listCategories" class="btn btn-primary mt-3">Crear un nuevo tema</a>
-            </c:if>
+            <div class="alert alert-info" role="alert">
+                No hay temas disponibles para esta categoría.
+                <c:if test="${not empty sessionScope.currentUser}">
+                    <a href="${pageContext.request.contextPath}/Topic_S?action=newTopic" class="alert-link">
+                        Crear un nuevo tema
+                    </a>
+                </c:if>
+            </div>
         </c:otherwise>
     </c:choose>
 </div>
+
 
 <jsp:include page="footer.jsp" />

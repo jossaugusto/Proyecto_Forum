@@ -8,21 +8,22 @@
 </jsp:include>
 
 <div class="container mt-5">
-    <div class="card shadow-sm">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">Editar Tema</h4>
+        </div>
         <div class="card-body">
-            <h2 class="card-title mb-4">Editar Tema</h2>
-
             <form action="${pageContext.request.contextPath}/Admin_S" method="post" onsubmit="return validarFormulario()">
                 <input type="hidden" name="id_topic" value="${topic.id_tema}" />
 
                 <div class="mb-3">
-                    <label for="titulo" class="form-label">Título:</label>
+                    <label for="title" class="form-label">Título:</label>
                     <input type="text" id="title" name="title" class="form-control" value="${topic.titulo}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="contenido" class="form-label">Contenido:</label>
-                    <textarea id="content" name="content" class="form-control" rows="5" required>${topic.contenido}</textarea>
+                    <label for="content" class="form-label">Contenido:</label>
+                    <textarea id="content" name="content" rows="5" class="form-control" required>${topic.contenido}</textarea>
                 </div>
 
                 <div class="mb-3">
@@ -44,15 +45,16 @@
                         <option value="cerrado" <c:if test="${topic.estado == 'cerrado'}">selected</c:if>>Cerrado</option>
                     </select>
                 </div>
-
-                <div class="d-grid gap-2">
+                
+                <input type="hidden" name="comesBack" value="${comesBack}" />
+                <div class="d-flex justify-content-between">
+                    <a href="javascript:history.back()" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" name="action" value="UpdateTopic" class="btn btn-primary">Actualizar Tema</button>
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageTopics" class="btn btn-secondary">Cancelar</a>
                 </div>
-
             </form>
         </div>
     </div>
 </div>
+
 
 <jsp:include page="footer.jsp" />

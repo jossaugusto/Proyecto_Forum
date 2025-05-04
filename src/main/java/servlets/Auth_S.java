@@ -40,19 +40,25 @@ public class Auth_S extends HttpServlet {
 		}
 	}
 
+	DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+	User_I userDAO = daoFactory.getUser();
+	Notification_I notificationDAO = daoFactory.getNotification();
+	
 	private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		
-		User_I userDAO = daoFactory.getUser();
+
 		boolean result = userDAO.validateUser(email, password);
 		
 		if (result) {
-			HttpSession session = request.getSession();
-			
 			User_E user = userDAO.getUserByEmail(email);
+
+			if (user.getFlgstate() == 0) {
+	            request.setAttribute("deletedAccount", true); // <-- Avisa a login.jsp
+				request.getRequestDispatcher("login.jsp").forward(request, response);
+				return;
+			}
+			HttpSession session = request.getSession();
 			
 			session.setAttribute("currentUser", user);
 			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
@@ -78,26 +84,22 @@ public class Auth_S extends HttpServlet {
 		user.setEmail(email);
 		user.setPassword(password);
 		user.setTipo_usuario(tipo_usuario);
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		User_I userDAO = daoFactory.getUser();
+
 		boolean result = userDAO.createUser(user);
 		
-		if (result) {
+		if (result) {		
+			User_E createdUser = userDAO.getUserByEmail(email);
+			int idCreatedUser = createdUser.getId_usuario();
 			
-			Notification_I notificationDAO = daoFactory.getNotification();
+			notificationDAO.createNotification(idCreatedUser, "bienvenida","Bienvenido al foro, " + name + "!");
+			
 			List<User_E> admins = userDAO.getAllUsers("admin", null);
-			
 			for (User_E admin : admins) {
-				notificationDAO.createNotification(admin.getId_usuario(), "registro-prueba","Un nuevo usuario se ha registrado en el foro.-prueba");
-			}	
-			
-			HttpSession session = request.getSession();
-			
-			User_E currentUser = userDAO.getUserByEmail(email);
-			
-			session.setAttribute("currentUser", currentUser);
-			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
+				int id_admin = admin.getId_usuario();
+				notificationDAO.createNotification(id_admin, "registro","Un nuevo usuario se ha registrado en el foro. " + name + " " + lastname + " con el email: " + email);
+			}
+			request.setAttribute("exito", "Se registró correctamente el usuario");
+			request.getRequestDispatcher("Admin_S").forward(request, response);
 		} else {
 			request.setAttribute("message", "Error al registrar el usuario");
 			request.getRequestDispatcher("register.jsp").forward(request, response);

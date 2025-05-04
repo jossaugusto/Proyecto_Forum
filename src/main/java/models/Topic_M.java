@@ -46,6 +46,9 @@ public class Topic_M implements Topic_I{
     
     public static final String COUNT_TOPICS = "CALL sp_tema_count()";
 	
+    public static final String SP_UPDATE_TOPIC_VIEWS = "CALL sp_tema_sumar_vista(?, ?);";
+
+    
 	// Ready
 	@Override
 	public List<Topic_E> getAllTopics(String keyword, String order) {
@@ -86,6 +89,7 @@ public class Topic_M implements Topic_I{
 				topic.setNombreUsuario(rs.getString("nombreUsuario"));
 				topic.setApellidoUsuario(rs.getString("apellidoUsuario"));
 				topic.setNombreCategoria(rs.getString("nombreCategoria"));
+				
 				listTopics.add(topic);
 			}
 		} catch (Exception e) {
@@ -318,11 +322,12 @@ public class Topic_M implements Topic_I{
 		return listTopics;
 	}
 
-	public void updateTopicViews(int id_tema) {
+	public void updateTopicViews(int id_tema, int id_usuario) {
 		try {
 			con = MySQLConnection.getConexion();
-			ps = con.prepareStatement("UPDATE temas SET vistas = vistas + 1 WHERE id_tema = ?;");
+			ps = con.prepareStatement(SP_UPDATE_TOPIC_VIEWS);
 			ps.setInt(1, id_tema);
+			ps.setInt(2, id_usuario);
 			ps.executeUpdate();
 		} catch (Exception e) {
 			closeResources(con, ps, rs, e, "updateTopicViews");

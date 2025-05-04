@@ -32,7 +32,7 @@ public interface Topic_I {
 	// Get topics by user ID
 	List<Topic_E> getTopicsByUserId(int userId);
 	
-	void updateTopicViews(int id_tema);
+	void updateTopicViews(int id_tema, int id_usuario);
 	
 	// Get the number of topics
 	int countTopics();

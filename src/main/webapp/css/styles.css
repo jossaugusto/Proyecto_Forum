@@ -1,0 +1,132 @@
+body {
+	background-color: #fff;
+	color: #000;
+	font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+	background-color: #fff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+	font-weight: bold;
+	color: #000;
+	transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+	color: steelblue;
+}
+
+.nav-link {
+	color: #333;
+	transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+	color: steelblue;
+}
+
+.btn-steelblue {
+	background-color: steelblue;
+	color: #fff;
+	border: none;
+	transition: background-color 0.3s ease;
+}
+
+.btn-steelblue:hover {
+	background-color: #3a6f98;
+}
+
+.alert {
+	margin: 1rem;
+}
+
+.dropdown-menu {
+	border-radius: 0.5rem;
+}
+
+.text-steelblue {
+	color: steelblue;
+}
+
+.topic-card-hover:hover {
+	transform: scale(1.01);
+	transition: all 0.2s ease-in-out;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+}
+
+.topic-card-hover:hover {
+	transform: scale(1.01);
+	transition: all 0.2s ease-in-out;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+}
+
+.stat-card:hover {
+	transform: scale(1.02);
+	transition: all 0.2s ease-in-out;
+}
+
+.admin-btn {
+	background-color: steelblue;
+	color: white;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.admin-btn:hover {
+	background-color: #3a6c8f;
+	color: #fff;
+}
+
+.category-card:hover {
+	transform: scale(1.02);
+	transition: all 0.2s ease-in-out;
+}
+
+.image-container {
+	width: 100%;
+	aspect-ratio: 1/1; /* cuadrado */
+	overflow: hidden;
+	border-top-left-radius: 0.5rem;
+	border-top-right-radius: 0.5rem;
+}
+
+.image-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.scrollable-topic-list {
+	max-height: 482px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	border-radius: 0.5rem;
+	scrollbar-gutter: stable;
+}
+
+.scrollable-mytopics-list {
+	max-height: 272px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	border-radius: 0.5rem;
+	scrollbar-gutter: stable;
+}
+
+.scrollable-mynotifications-list {
+	max-height: 315px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	border-radius: 0.5rem;
+	scrollbar-gutter: stable;
+}
+
+.scrollable-category-list {
+	max-height: 900px;
+	overflow-y: auto;
+	padding-right: 10px;
+	scrollbar-gutter: stable;
+}

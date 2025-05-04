@@ -7,58 +7,60 @@
 	<jsp:param name="titulo" value="Categorias" />
 </jsp:include>
 
-<div class="container mt-5">
-	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2 class="fw-bold">Categorías</h2>
-		<c:if
-			test="${not empty sessionScope.currentUser && sessionScope.currentUser.tipo_usuario == 'admin'}">
-			<a href="${pageContext.request.contextPath}/registerCategory.jsp"
-				class="btn btn-success"> <i class="bi bi-plus-circle me-1"></i>
-				Nueva Categoría
-			</a>
-		</c:if>
-	</div>
-
-	<c:choose>
-		<c:when test="${not empty listCategories}">
-			<div class="row g-4">
-  <c:forEach var="category" items="${listCategories}">
-    <div class="col-md-6 col-lg-4">
-      <div class="card card-category h-100 text-center p-4">
-        <c:choose>
-          <c:when test="${not empty category.imagen}">
-            <img src="${pageContext.request.contextPath}/imgs/${category.imagen}"
-                 alt="Imagen de ${category.nombre}"
-                 class="category-img mx-auto">
-          </c:when>
-          <c:otherwise>
-            <div class="d-flex justify-content-center align-items-center bg-light text-muted category-img">
-              <i class="bi bi-image" style="font-size: 2rem;"></i>
-            </div>
-          </c:otherwise>
-        </c:choose>
-
-        <h5 class="fw-bold mt-2">${category.nombre}</h5>
-        <p class="text-muted">${category.descripcion}</p>
-        <form action="${pageContext.request.contextPath}/Category_S" class="mt-auto">
-          <input type="hidden" name="id_category" value="${category.id_categoria}" />
-          <input type="hidden" name="nombre_category" value="${category.nombre}" />
-          <button name="action" value="viewTopics" class="btn btn-primary w-100">Ver temas</button>
-        </form>
-      </div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold">Categorías</h2>
+        <c:if test="${not empty sessionScope.currentUser && (sessionScope.currentUser.tipo_usuario == 'admin' or sessionScope.currentUser.tipo_usuario == 'profesor')}">
+            <a href="${pageContext.request.contextPath}/registerCategory.jsp" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>Nueva Categoría
+            </a>
+        </c:if>
     </div>
-  </c:forEach>
+
+    <c:choose>
+        <c:when test="${not empty listCategories}">
+            <div class="row g-4">
+                <c:forEach var="category" items="${listCategories}">
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-0 category-card">
+                            <c:choose>
+                                <c:when test="${not empty category.imagen}">
+                                    <div class="card">
+									  <div class="image-container">
+									    <img src="${pageContext.request.contextPath}/imgs/${category.imagen}" 
+									         alt="Imagen de ${category.nombre}">
+									  </div>
+									</div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                                        <i class="bi bi-image fs-1 text-muted"></i>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${category.nombre}</h5>
+                                <p class="card-text flex-grow-1">${category.descripcion}</p>
+                                <form action="${pageContext.request.contextPath}/Category_S">
+                                    <input type="hidden" name="id_category" value="${category.id_categoria}" />
+                                    <input type="hidden" name="nombre_category" value="${category.nombre}" />
+                                    <button name="action" value="viewTopics" class="btn btn-outline-primary w-100">
+                                        Ver temas
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="alert alert-warning text-center">
+                No hay categorías disponibles.
+            </div>
+        </c:otherwise>
+    </c:choose>
 </div>
-
-		</c:when>
-		<c:otherwise>
-			<div class="alert alert-warning mt-4" role="alert">No hay
-				categorías disponibles.</div>
-		</c:otherwise>
-	</c:choose>
-</div>
-
-
 
 
 <jsp:include page="footer.jsp" />

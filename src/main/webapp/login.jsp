@@ -5,44 +5,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum - Inicio de sesión</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Foro Académico - Inicio de sesión</title>
+    <!-- En el <head> -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Bienvenido al Foro</h1>
-        <p class="text-center">Por favor, inicie sesión para continuar o cree una cuenta.</p>
 
-        <div class="col-md-6 mx-auto">
-            <form action="Auth_S" method="post" class="border p-4 rounded shadow-sm">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Correo electrónico:</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña:</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" name="type" value="login" class="btn btn-primary w-100">Iniciar sesión</button>
-            </form>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4">Bienvenido al Foro</h2>
+                    <p class="text-center">Por favor, inicie sesión para continuar o cree una cuenta.</p>
 
-            <p class="mt-3 text-center">
-                ¿No tienes una cuenta? <a href="register.jsp">Regístrate aquí</a>
-            </p>
-            <p class="text-center">
-                También puedes: <a href="InitialConfi_S">Ingresar como invitado</a>
-            </p>
+                    <form action="Auth_S" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
 
-            <div class="mt-3">
-                <c:if test="${not empty message}">
-                    <div class="alert alert-danger text-center">
-                        ${message}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" name="type" value="login">Iniciar sesión</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <p>También puedes: <a href="InitialConfi_S" class="text-decoration-none">Ingresar como invitado</a></p>
                     </div>
-                </c:if>
+
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-danger mt-3 text-center" role="alert">
+                            ${message}
+                        </div>
+                    </c:if>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+
+<jsp:include page="deletedAccountModal.jsp" />
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<c:if test="${deletedAccount == true}">
+    <script>
+        const modal = new bootstrap.Modal(document.getElementById('deletedAccountModal'));
+        modal.show();
+    </script>
+</c:if>
 
 </body>
 </html>

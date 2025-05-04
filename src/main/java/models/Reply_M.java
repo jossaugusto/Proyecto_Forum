@@ -42,7 +42,7 @@ public class Reply_M implements Reply_I{
 	public static final String GET_QUANTITY_REPLY_BY_TOPIC_ID = "CALL sp_respuesta_get_quantity_by_topic(?)";
 	public static final String GET_REPLIES_BY_PARENT_ID = "CALL sp_respuesta_get_by_parent_id(?)";
 	public static final String COUNT_REPLIES = "CALL sp_respuesta_count_all()";
-
+	public static final String UPDATE_ACCEPT_REPLY = "CALL sp_respuesta_update_aceptar(?,?)";
 	
 	// Ready
 	@Override
@@ -233,7 +233,6 @@ public class Reply_M implements Reply_I{
 		} 
 		return cantidad;
 	}
-
 	
 	@Override
 	public List<Reply_E> getRepliesByParentId(int parentId) {
@@ -300,4 +299,25 @@ public class Reply_M implements Reply_I{
 		return count;
 	}
 
+	
+	@Override
+	public boolean acceptedReply(int idReply, boolean accepted) {
+		boolean result = false;
+
+		try {
+			con = MySQLConnection.getConexion();
+			ps = con.prepareStatement(UPDATE_ACCEPT_REPLY);
+			ps.setInt(1, idReply);
+			ps.setBoolean(2, accepted);
+			
+			int rowsAffected = ps.executeUpdate();
+			
+			if (rowsAffected > 0) result = true;
+		} catch (Exception e) {
+			closeResources(con, ps, rs, e);
+		}
+		return result;
+	}
+
+	
 }

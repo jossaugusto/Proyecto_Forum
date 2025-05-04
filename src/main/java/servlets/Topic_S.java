@@ -10,12 +10,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.DAOFactory;
 import entitys.Reply_E;
 import entitys.Topic_E;
+import entitys.User_E;
+import interfaces.Notification_I;
 import interfaces.Reply_I;
 import interfaces.Topic_I;
+import interfaces.User_I;
 
 @WebServlet("/Topic_S")
 public class Topic_S extends HttpServlet {
@@ -43,28 +47,30 @@ public class Topic_S extends HttpServlet {
 				System.out.println("Accion no reconocida");
 		}
 	}
+	
+	DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+	Topic_I topicDAO = daoFactory.getTopic();
+	Reply_I replayDAO = daoFactory.getReply();
+	Notification_I notificationDAO = daoFactory.getNotification();
+	User_I userDAO = daoFactory.getUser();
 
 	private void viewTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		HttpSession session = request.getSession();
+		User_E currentUser = (User_E) session.getAttribute("currentUser");
+		
 		String id_tema = request.getParameter("id_tema");
 		
 		if (id_tema != null) {
-			String message = request.getParameter("message");
 			
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-			Topic_I topicDAO = daoFactory.getTopic();
+			if(currentUser != null) {
+				topicDAO.updateTopicViews(Integer.parseInt(id_tema), currentUser.getId_usuario());		
+			}
 			
-			topicDAO.updateTopicViews(Integer.parseInt(id_tema));			
 			Topic_E topic = topicDAO.getTopicById(Integer.parseInt(id_tema));
-			
-			Reply_I replayDAO = daoFactory.getReply();
 			List<Reply_E> listRepliesByTopicId = replayDAO.getRepliesByTopicId(Integer.parseInt(id_tema));
-			
-			//List<Reply_E> listRepliesParentIDNotNull = replayDAO.getRepliesByTopicIdAndParentIdNotNull(Integer.parseInt(id_tema));
 			Map<Integer, List<Reply_E>> repliesByParent = new HashMap<>();
-
 			for (Reply_E reply : listRepliesByTopicId) {
 			    int parentId = reply.getId_respuesta_padre();
-			    
 			    if (parentId > 0) {
 			        List<Reply_E> childReplies = replayDAO.getRepliesByParentId(parentId);
 			        if (!childReplies.isEmpty()) {
@@ -72,10 +78,6 @@ public class Topic_S extends HttpServlet {
 			        }
 			    }
 			}			
-			
-			if (message != null) {
-				request.setAttribute("message", message);
-			}
 			
 			request.setAttribute("topic", topic);
 			request.setAttribute("listRepliesByTopicId", listRepliesByTopicId);
@@ -98,12 +100,16 @@ public class Topic_S extends HttpServlet {
 	    nuevoTema.setContenido(contenido);
 	    nuevoTema.setId_usuario(id_usuario);
 	    nuevoTema.setId_categoria(id_categoria);
-	    
-	    DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Topic_I topicDAO = daoFactory.getTopic();
+
 		boolean result = topicDAO.createTopic(nuevoTema);
 		
 		if (result) {
+			List<User_E> admins = userDAO.getAllUsers("admin", null);
+			for (User_E admin : admins) {
+				int id_admin = admin.getId_usuario();
+				notificationDAO.createNotification(id_admin, "tema","Se ha creado un nuevo tema: " + titulo);
+			}
+			
 	        response.sendRedirect("InitialConfi_S");
 	    } else {
 	    	request.setAttribute("error", "Error al crear el tema");

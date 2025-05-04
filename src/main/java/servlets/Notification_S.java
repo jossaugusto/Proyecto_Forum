@@ -38,14 +38,8 @@ public class Notification_S extends HttpServlet {
 		String action = request.getParameter("action");
 		
 		switch (action) {
-			case "getAllNotifications":
-				// Call the method to get all notifications
-				break;
-			case "getNotificationById":
-				getNotificationById(request, response);
-				break;
-			case "createNotification":
-				// Call the method to create a notification
+			case "viewNotification":
+				viewNotification(request, response);
 				break;
 			case "deleteNotification":
 				deleteNotification(request, response);
@@ -55,13 +49,12 @@ public class Notification_S extends HttpServlet {
 		}
 	}
 
-
+	DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
+	Notification_I notificationDAO = daoFactory.getNotification();
+	
 	private void deleteNotification(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id_notificacion = request.getParameter("id_notificacion");
-		
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Notification_I notificationDAO = daoFactory.getNotification();
-		
+
 		if (id_notificacion != null) {
 			int id = Integer.parseInt(id_notificacion);
 			notificationDAO.deleteNotification(id);
@@ -72,18 +65,16 @@ public class Notification_S extends HttpServlet {
 		}
 	}
 
-	private void getNotificationById(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
-		String id_tema = request.getParameter("id_tema");
-		System.out.println("ID del tema: es getNotificationByiD" + id_tema);
+	private void viewNotification(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		String id_notificacion = request.getParameter("id_notificacion");
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(DAOFactory.MYSQL);
-		Notification_I notificationDAO = daoFactory.getNotification();
+
 		Notification_E notification = notificationDAO.getNotificationById(Integer.parseInt(id_notificacion));
+		
 		if (notification != null) {
 			// Mark the notification as read
 			notificationDAO.markAsRead(notification.getId_notificacion());
 			request.setAttribute("notification", notification);
-			request.getRequestDispatcher("notificationDetails.jsp").forward(request, response);
+			request.getRequestDispatcher("notificationDetailsModal.jsp").forward(request, response);
 		}
 
 	}

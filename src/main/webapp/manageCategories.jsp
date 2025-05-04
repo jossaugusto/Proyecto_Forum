@@ -7,121 +7,95 @@
 	<jsp:param name="titulo" value="Gestionar Categorías" />
 </jsp:include>
 
-<div class="container mt-5">
-	<div class="card shadow-sm">
-		<div class="card-body">
-			<h2 class="card-title mb-4">Categorías Registradas</h2>
+<div class="container py-5">
+    <div class="mb-4">
+        <h2 class="text-center">Categorías Registradas</h2>
+    </div>
 
-			<!-- Buscador -->
-			<form method="get"
-				action="${pageContext.request.contextPath}/Admin_S"
-				class="row g-3 mb-4">
-				<div class="col-md-8">
-					<input type="text" name="keyword" class="form-control"
-						placeholder="Buscar por nombre o descripción..."
-						value="${keyword}">
-				</div>
-				
-				<input type="hidden" name="order"
-					value="${order == 'ASC' ? 'DESC' : 'ASC'}" />
+    <form method="get" action="${pageContext.request.contextPath}/Admin_S" class="row g-2 justify-content-center mb-4">
+        <div class="col-md-6">
+            <input type="text" name="keyword" class="form-control" placeholder="Buscar por nombre o descripción..." value="${keyword}">
+        </div>
 
-				<div class="col-md-2">
-					<button type="submit" name="action" value="ManageCategories"
-						class="btn btn-outline-secondary w-100">
-						Ordenar:
-						<c:choose>
-							<c:when test="${order == 'DESC'}">⬆ ASC</c:when>
-							<c:otherwise>⬇ DESC</c:otherwise>
-						</c:choose>
-					</button>
-				</div>
-				
-				<div class="col-md-2">
-					<button type="submit" name="action" value="ManageCategories"
-						class="btn btn-primary w-100">
-						<i class="bi bi-search"></i> Buscar
-					</button>
-				</div>
-			</form>
+        <input type="hidden" name="order" value="${order == 'ASC' ? 'DESC' : 'ASC'}" />
 
-			<div>
-				<a href="${pageContext.request.contextPath}/registerCategory.jsp"
-					class="btn btn-success mb-3"> <i class="bi bi-plus-circle"></i>
-					Registrar Nueva Categoría
-				</a>
-			</div>
+        <div class="col-auto">
+            <button type="submit" name="action" value="ManageCategories" class="btn" style="background-color: steelblue; color: white;">
+                Ordenar:
+                <c:choose>
+                    <c:when test="${order == 'DESC'}">⬆ ASC</c:when>
+                    <c:otherwise>⬇ DESC</c:otherwise>
+                </c:choose>
+            </button>
+        </div>
 
-			<!-- Mensaje de �xito o error -->
-			<c:if test="${not empty message}">
-				<div class="alert alert-${messageType}">${message}</div>
-			</c:if>
-		</div>
+        <div class="col-auto">
+            <button type="submit" name="action" value="ManageCategories" class="btn" style="background-color: steelblue; color: white;">
+                Buscar
+            </button>
+        </div>
+    </form>
 
-		<!-- Mensaje si no hay resultados -->
-		<c:if test="${empty listCategories}">
-			<div class="alert alert-info">No hay categorías registradas.</div>
-		</c:if>
+    <div class="text-center mb-3">
+        <a href="${pageContext.request.contextPath}/registerCategory.jsp" class="btn btn-outline-primary rounded-pill px-4">
+            Registrar Nueva Categoría
+        </a>
+    </div>
 
-		<!-- Tabla de categor�as -->
-		<c:if test="${not empty listCategories}">
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered">
-					<thead class="table-dark">
-						<tr>
-							<th>ID</th>
-							<th>Nombre</th>
-							<th>Descripción</th>
-							<th>Imagen</th>
-							<th>Fecha de Creación</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach var="category" items="${listCategories}">
-							<tr>
-								<td>${category.id_categoria}</td>
-								<td>${category.nombre}</td>
-								<td>${category.descripcion}</td>
-								<td><c:if test="${not empty category.imagen}">
-										<img
-											src="${pageContext.request.contextPath}/imgs/${category.imagen}"
-											alt="Imagen" width="60" height="60" class="rounded">
-									</c:if> <c:if test="${empty category.imagen}">
-										<span class="text-muted">Sin imagen</span>
-									</c:if></td>
-								<td><fmt:formatDate value="${category.fecha_creacion}"
-										pattern="dd/MM/yyyy HH:mm" /></td>
-								<td><a
-									href="${pageContext.request.contextPath}/Admin_S?action=EditCategory&id_category=${category.id_categoria}"
-									class="btn btn-sm btn-warning me-1"> <i
-										class="bi bi-pencil-square"></i> Editar
-								</a> <a
-									href="${pageContext.request.contextPath}/Admin_S?action=DeleteCategory&id_category=${category.id_categoria}"
-									class="btn btn-sm btn-danger"
-									onclick="return confirm('¿Estás seguro de eliminar esta categoría?');">
-										<i class="bi bi-trash"></i> Eliminar
-								</a></td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</div>
-		</c:if>
+    <c:if test="${empty listCategories}">
+        <div class="alert alert-info text-center">No hay categorías registradas.</div>
+    </c:if>
 
-		<!-- Botones de navegacion -->
-		<div class="mt-4">
-			<a
-				href="${pageContext.request.contextPath}/Admin_S?action=adminPanel"
-				class="btn btn-secondary"> <i class="bi bi-arrow-left-circle"></i>
-				Volver al Panel
-			</a> <a
-				href="${pageContext.request.contextPath}/Admin_S?action=ManageDeletedCategories"
-				class="btn btn-secondary"> <i class="bi bi-arrow-left-circle"></i>
-				Ver categorías eliminadas
-			</a>
-		</div>
-	</div>
+    <c:if test="${not empty listCategories}">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Imagen</th>
+                        <th>Fecha de Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="category" items="${listCategories}">
+                        <tr>
+                            <td>${category.id_categoria}</td>
+                            <td>${category.nombre}</td>
+                            <td>${category.descripcion}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty category.imagen}">
+                                        <img src="${pageContext.request.contextPath}/imgs/${category.imagen}" alt="Imagen" class="img-thumbnail" width="60" height="60">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-muted">Sin imagen</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td><fmt:formatDate value="${category.fecha_creacion}" pattern="dd/MM/yyyy HH:mm" /></td>
+                            <td>
+                                <a href="${pageContext.request.contextPath}/Admin_S?action=EditCategory&id_category=${category.id_categoria}" class="btn btn-sm btn-outline-secondary me-1">Editar</a>
+                                <a href="${pageContext.request.contextPath}/Admin_S?action=DeleteCategory&id_category=${category.id_categoria}" class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('¿Estás seguro de eliminar esta categoría?');">
+                                    Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a href="${pageContext.request.contextPath}/Admin_S?action=adminPanel" class="btn btn-link">← Volver al Panel</a>
+        <a href="${pageContext.request.contextPath}/Admin_S?action=ManageDeletedCategories" class="btn btn-link">Ver categorías eliminadas →</a>
+    </div>
 </div>
+
 
 
 <jsp:include page="footer.jsp" />

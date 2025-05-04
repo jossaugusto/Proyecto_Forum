@@ -20,6 +20,7 @@ import entitys.Category_E;
 import entitys.Topic_E;
 import entitys.User_E;
 import interfaces.Category_I;
+import interfaces.Notification_I;
 import interfaces.Reply_I;
 import interfaces.Topic_I;
 import interfaces.User_I;
@@ -122,6 +123,7 @@ public class Admin_S extends HttpServlet {
 	User_I userDAO = daoFactory.getUser();
 	Topic_I topicDAO = daoFactory.getTopic();
 	Category_I categoryDAO = daoFactory.getCategory();
+	Notification_I notificationDAO = daoFactory.getNotification();
 
 	// Panel de administracion
 	private void adminPanel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -152,7 +154,6 @@ public class Admin_S extends HttpServlet {
 		} else {
 			listUsers = userDAO.getAllUsers(null, order);
 		}
-		
 		request.setAttribute("listUsers", listUsers);
 		request.setAttribute("order", order);
 		request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
@@ -241,6 +242,9 @@ public class Admin_S extends HttpServlet {
 		boolean result = userDAO.restoreUser(Integer.parseInt(id_user));
 		
 		if (result) {
+			User_E user = userDAO.getUserById(Integer.parseInt(id_user));
+			notificationDAO.createNotification(user.getId_usuario(), "bienvenida", "Su cuenta ha sido restaurada por un administrador.");
+			
 			request.setAttribute("exito", "Éxito al restaurar usuario con ID: " + id_user);
 			request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
 		} else {
@@ -263,7 +267,6 @@ public class Admin_S extends HttpServlet {
 		} else {
 			listTopics = topicDAO.getAllTopics(null, order);
 		}
-		
 		request.setAttribute("order", order);
 		request.setAttribute("listTopics", listTopics);
 		request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
@@ -290,11 +293,13 @@ public class Admin_S extends HttpServlet {
 	// Editar tema
 	private void editTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id_tema = request.getParameter("id_topic");
+		String comesBack = request.getParameter("comesBack");
 		
 		Topic_I userDAO = daoFactory.getTopic();
 		Topic_E topic = userDAO.getTopicById(Integer.parseInt(id_tema));
 		
 		request.setAttribute("topic", topic);
+		request.setAttribute("comesBack", comesBack);
 		request.getRequestDispatcher("editTopic.jsp").forward(request, response);
 	}
 
@@ -317,6 +322,15 @@ public class Admin_S extends HttpServlet {
 		
 		if (result) {
 			request.setAttribute("exito", "Éxito al actualizar el tema");
+			
+			boolean comesBack = Boolean.parseBoolean(request.getParameter("comesBack"));
+			if (comesBack) {
+				Topic_E returnTheTopic = topicDAO.getTopicById(id_topic);
+				request.setAttribute("topic", returnTheTopic);
+				request.getRequestDispatcher("topic.jsp").forward(request, response);
+				return;
+			}
+
 			request.getRequestDispatcher("Admin_S?action=ManageTopics").forward(request, response);
 
 		} else {
@@ -327,17 +341,38 @@ public class Admin_S extends HttpServlet {
 	
 	// Eliminar tema
 	private void deleteTopic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id_topic = request.getParameter("id_topic");
-		System.out.println("ID_TEMA en delete: " + id_topic);
+		HttpSession session = request.getSession();
+		User_E currentUser = (User_E) session.getAttribute("currentUser");
 		
+		String id_topic = request.getParameter("id_topic");
 		boolean result = topicDAO.deleteTopic(Integer.parseInt(id_topic));
 		
 		if (result) {
-			request.setAttribute("exito", "Éxito al eliminar el tema");
-			request.getRequestDispatcher("Admin_S?action=ManageTopics").forward(request, response);
+			Topic_E topic = topicDAO.getTopicById(Integer.parseInt(id_topic));
+			String title = topic.getTitulo();
+			int id_user = topic.getId_usuario();
+			
+			if (currentUser.getTipo_usuario().equals("admin"))
+			{
+				notificationDAO.createNotification(id_user, "eliminacion", "Su tema: "+ title +" ha sido eliminado por un administrador.");
+				
+				request.setAttribute("exito", "Éxito al eliminar el tema");
+				request.getRequestDispatcher("Admin_S?action=ManageTopics").forward(request, response);
+			} else if (currentUser.getId_usuario() == id_user) {
+				notificationDAO.createNotification(id_user, "eliminacion", "Su tema: "+ title +" ha sido eliminado.");
+				
+				request.setAttribute("exito", "Éxito al eliminar el tema");
+				request.getRequestDispatcher("InitialConfi_S").forward(request, response);
+			}
+
 		} else {
 			request.setAttribute("error", "Error al eliminar el tema");
-			request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
+			
+			if (currentUser.getTipo_usuario().equals("admin")) {
+				request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
+			} else {
+				request.getRequestDispatcher("InitialConfi_S").forward(request, response);
+			}
 		}
 	}
 		
@@ -398,50 +433,59 @@ public class Admin_S extends HttpServlet {
 	    String descripcion = request.getParameter("descripcion");
 	    Part filePart = request.getPart("imagen");
 	    
-	    // Obtener el nombre y extensión del archivo
-	    String originalName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-	    String extension = "";
-	    
-	    // Verificar si el archivo tiene extensión
-	    if (originalName.contains(".")) {
-	        extension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
-	        // Comprobar que sea una extensión permitida
-	        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
-	            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
-	            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
-	            return;
-	        }
-	    } else {
-	        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
-	        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
-	        return;
-	    }
-	    
-	    // Generar un nombre único para evitar colisiones, manteniendo la extensión original
-	    String baseName = System.currentTimeMillis() + "_" + originalName.substring(0, originalName.lastIndexOf('.'));
-	    String newFileName = baseName + extension;
-	    
-	    String uploadPath = getServletContext().getInitParameter("project-images-dir");
-	    
-	    // Asegurarse de que el directorio exista
-	    File uploadDir = new File(uploadPath);
-	    if (!uploadDir.exists()) uploadDir.mkdirs();
-
-	    // Ruta completa en el servidor para guardar el archivo
-	    String filePath = uploadPath + File.separator + newFileName;
-	    filePart.write(filePath);
-	    
-	    // Ruta relativa para guardar en la BD
-	    String imagePath = newFileName;
-	    
 	    // Crear objeto categoría
 	    Category_E category = new Category_E();
+
+	    if(filePart.getSize() != 0) {
+	    	// Obtener el nombre y extensión del archivo
+		    String originalName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+		    String extension = "";
+		    
+		    // Verificar si el archivo tiene extensión
+		    if (originalName.contains(".")) {
+		        extension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
+		        // Comprobar que sea una extensión permitida
+		        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
+		            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
+		            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		            return;
+		        }
+		    } else {
+		        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
+		        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		        return;
+		    }
+		    
+		    // Generar un nombre único para evitar colisiones, manteniendo la extensión original
+		    String baseName = System.currentTimeMillis() + "_" + originalName.substring(0, originalName.lastIndexOf('.'));
+		    String newFileName = baseName + extension;
+		    
+		    String uploadPath = getServletContext().getInitParameter("project-images-dir");
+		    
+		    // Asegurarse de que el directorio exista
+		    File uploadDir = new File(uploadPath);
+		    if (!uploadDir.exists()) uploadDir.mkdirs();
+
+		    // Ruta completa en el servidor para guardar el archivo
+		    String filePath = uploadPath + File.separator + newFileName;
+		    filePart.write(filePath);
+		    
+		    // Ruta relativa para guardar en la BD
+		    String imagePath = newFileName;
+		    
+		    category.setImagen(imagePath);
+	    }
 	    category.setNombre(nombre);
 	    category.setDescripcion(descripcion);
-	    category.setImagen(imagePath);
+	    
 	    boolean result = categoryDAO.createCategory(category);
 	    
 	    if (result) {
+	    	List<User_E> listUsers = userDAO.getAllUsers(null, "ASC");
+	    	for (User_E user : listUsers) {
+	    		notificationDAO.createNotification(user.getId_usuario(),"categoria" ,"Se ha creado una nueva categoría: " + nombre);
+	    	}
+	    	
 	        request.setAttribute("exito", "Éxito al registrar la categoría");
 	        request.getRequestDispatcher("Admin_S?action=ManageCategories").forward(request, response);
 	    } else {
@@ -458,56 +502,58 @@ public class Admin_S extends HttpServlet {
 		request.setAttribute("category", category);
 		request.getRequestDispatcher("editCategory.jsp").forward(request, response);
 	}
-
 	
 	private void updateCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String nombre = request.getParameter("nombre");
 		String descripcion = request.getParameter("descripcion");
 		int id_category = Integer.parseInt(request.getParameter("id_category"));
-		
 		Part filePart = request.getPart("imagen");
 	    
-	    // Obtener el nombre y extensión del archivo
-	    String originalName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-	    String extension = "";
-	    
-	    // Verificar si el archivo tiene extensión
-	    if (originalName.contains(".")) {
-	        extension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
-	        // Comprobar que sea una extensión permitida
-	        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
-	            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
-	            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
-	            return;
-	        }
-	    } else {
-	        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
-	        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
-	        return;
-	    }
-	    
-	   // Generar un nombre único para evitar colisiones, manteniendo la extensión original
-	    String baseName = System.currentTimeMillis() + "_" + originalName.substring(0, originalName.lastIndexOf('.'));
-	    String newFileName = baseName + extension;
-
-	    // Directorio de subida
-	    String uploadPath = getServletContext().getInitParameter("project-images-dir");
-	    
-	    // Asegurarse de que el directorio exista
-	    File uploadDir = new File(uploadPath);
-	    if (!uploadDir.exists()) uploadDir.mkdirs();
-
-	    // Ruta completa en el servidor
-	    String filePath = uploadPath + File.separator + newFileName;
-	    filePart.write(filePath);
-
-	    // Ruta relativa para guardar en la BD
-	    String imagePath = newFileName;
-	    
 		Category_E category = new Category_E();
+		
+		if (filePart.getSize() != 0) {
+			// Obtener el nombre y extensión del archivo
+		    String originalName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+		    String extension = "";
+		    
+		    // Verificar si el archivo tiene extensión
+		    if (originalName.contains(".")) {
+		        extension = originalName.substring(originalName.lastIndexOf('.')).toLowerCase();
+		        // Comprobar que sea una extensión permitida
+		        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
+		            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
+		            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		            return;
+		        }
+		    } else {
+		        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
+		        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		        return;
+		    }
+		    
+		   // Generar un nombre único para evitar colisiones, manteniendo la extensión original
+		    String baseName = System.currentTimeMillis() + "_" + originalName.substring(0, originalName.lastIndexOf('.'));
+		    String newFileName = baseName + extension;
+
+		    // Directorio de subida
+		    String uploadPath = getServletContext().getInitParameter("project-images-dir");
+		    
+		    // Asegurarse de que el directorio exista
+		    File uploadDir = new File(uploadPath);
+		    if (!uploadDir.exists()) uploadDir.mkdirs();
+
+		    // Ruta completa en el servidor
+		    String filePath = uploadPath + File.separator + newFileName;
+		    filePart.write(filePath);
+
+		    // Ruta relativa para guardar en la BD
+		    String imagePath = newFileName;
+		    
+			category.setImagen(imagePath);
+		}
 		category.setNombre(nombre);
 		category.setDescripcion(descripcion);
-		category.setImagen(imagePath);
+
 		category.setId_categoria(id_category);
 		
 		boolean result = categoryDAO.updateCategory(category);
@@ -521,7 +567,6 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("editCategory.jsp").forward(request, response);
 		}
 	}
-
 	
 	private void deleteCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id_category = request.getParameter("id_category");
@@ -536,7 +581,6 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("manageCategories.jsp").forward(request, response);
 		}
 	}
-
 	
 	private void restoreCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id_category = request.getParameter("id_category");

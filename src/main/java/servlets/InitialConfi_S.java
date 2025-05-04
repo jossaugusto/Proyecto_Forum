@@ -48,14 +48,14 @@ public class InitialConfi_S extends HttpServlet {
 		List<Topic_E> listTopics = topicDAO.getAllTopics(null,"DESC");
 		List<Category_E> listCategories = categoryDAO.getAllCategories(null, "ASC");
 		
-		// Enviar la lista de temas a la vista
-		session.setAttribute("listTopics", listTopics);
-		
 		// Contar la cantidad de respuestas por tema
 		for (Topic_E tema : listTopics) {
 		    int cantidad = replyDAO.getQuantityReplyByTopicId(tema.getId_tema());
 		    tema.setCantidadRespuestas(cantidad);
 		}
+
+		// Enviar la lista de temas a la vista
+		session.setAttribute("listTopics", listTopics);
 		
 		// Enviar la lista de categorías a la vista
 		session.setAttribute("listCategories", listCategories);

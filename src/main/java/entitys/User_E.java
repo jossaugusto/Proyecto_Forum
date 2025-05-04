@@ -10,7 +10,14 @@ public class User_E {
 	private String password;
 	private String tipo_usuario;
 	private Date fecha_registro;
+	private int flgstate;
 	
+	public int getFlgstate() {
+		return flgstate;
+	}
+	public void setFlgstate(int flgstate) {
+		this.flgstate = flgstate;
+	}
 	public int getId_usuario() {
 		return id_usuario;
 	}
