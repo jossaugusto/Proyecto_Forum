@@ -8,7 +8,7 @@
 </jsp:include>
 
 <div class="container mt-4">
-    <h2>Temas disponibles en la categoría: <strong>${category}</strong></h2>
+    <h2 class="text-secondary">Temas disponibles en la categoría: <strong class="text-dark">${category}</strong></h2>
 
     <c:choose>
         <c:when test="${not empty listTopicsByCategoryId}">

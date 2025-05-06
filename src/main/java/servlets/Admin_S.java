@@ -298,6 +298,8 @@ public class Admin_S extends HttpServlet {
 		Topic_I userDAO = daoFactory.getTopic();
 		Topic_E topic = userDAO.getTopicById(Integer.parseInt(id_tema));
 		
+		System.out.println("Titulo de tema: " + topic.getTitulo());
+		
 		request.setAttribute("topic", topic);
 		request.setAttribute("comesBack", comesBack);
 		request.getRequestDispatcher("jsp/admin/editTopic.jsp").forward(request, response);
