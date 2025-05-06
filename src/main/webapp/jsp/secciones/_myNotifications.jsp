@@ -56,7 +56,7 @@
 
 <script>
 function mostrarNotificacion(id_notificacion, id_tema) {
-    fetch('Notification_S?action=viewNotification&id_notificacion=' + id_notificacion + '&id_tema=' + id_tema)
+    fetch('${pageContext.request.contextPath}/Notification_S?action=viewNotification&id_notificacion=' + id_notificacion + '&id_tema=' + id_tema)
         .then(response => response.text())
         .then(html => {
             const contentDiv = document.getElementById('notificationModalContent');

@@ -19,7 +19,7 @@
                     <h2 class="card-title text-center mb-4">Bienvenido al Foro</h2>
                     <p class="text-center">Por favor, inicie sesión para continuar o cree una cuenta.</p>
 
-                    <form action="Auth_S" method="post">
+                    <form action="${pageContext.request.contextPath}/Auth_S" method="post">
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo electrónico</label>
                             <input type="email" class="form-control" id="email" name="email" required>
@@ -36,7 +36,7 @@
                     </form>
 
                     <div class="mt-3 text-center">
-                        <p>También puedes: <a href="InitialConfi_S" class="text-decoration-none">Ingresar como invitado</a></p>
+                        <p>También puedes: <a href="${pageContext.request.contextPath}/InitialConfi_S" class="text-decoration-none">Ingresar como invitado</a></p>
                     </div>
 
                     <c:if test="${not empty message}">
@@ -51,7 +51,7 @@
 </div>
 
 
-<jsp:include page="deletedAccountModal.jsp" />
+<%-- <jsp:include page="deletedAccountModal.jsp" /> --%>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

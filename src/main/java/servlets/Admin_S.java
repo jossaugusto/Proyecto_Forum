@@ -114,7 +114,7 @@ public class Admin_S extends HttpServlet {
 			}
 		} else {
 			request.setAttribute("message", "Debe iniciar sesion.");
-			request.getRequestDispatcher("login.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/autenticacion/login.jsp").forward(request, response);
 		}
 
 	}
@@ -136,7 +136,7 @@ public class Admin_S extends HttpServlet {
 			request.setAttribute("cantidadUsuarios", cantidadUsuarios);
 			request.setAttribute("cantidadTemas", cantidadTemas);
 			request.setAttribute("cantidadRespuestas", cantidadRespuestas);
-			request.getRequestDispatcher("admin.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/admin.jsp").forward(request, response);
 		
 	}
 	
@@ -156,7 +156,7 @@ public class Admin_S extends HttpServlet {
 		}
 		request.setAttribute("listUsers", listUsers);
 		request.setAttribute("order", order);
-		request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/manageUsers.jsp").forward(request, response);
 	}
 	
 	// Gestionar usuarios eliminados
@@ -173,7 +173,7 @@ public class Admin_S extends HttpServlet {
 		
 		request.setAttribute("listDeletedUsers", listDeletedUsers);
 		request.setAttribute("order", order);
-		request.getRequestDispatcher("manageDeletedUsers.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/manageDeletedUsers.jsp").forward(request, response);
 	}
 
 	// Editar usuario
@@ -188,7 +188,7 @@ public class Admin_S extends HttpServlet {
 			request.setAttribute("error", "Error al obtener el usuario");
 		}
 
-		request.getRequestDispatcher("editUser.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/editUser.jsp").forward(request, response);
 	}
 
 	// Guardar usuario
@@ -214,11 +214,11 @@ public class Admin_S extends HttpServlet {
 				request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
 			} else {
 				request.setAttribute("error", "Error al actualizar el usuario con ID: " + id_user);
-				request.getRequestDispatcher("editUser.jsp").forward(request, response);
+				request.getRequestDispatcher("jsp/admin/editUser.jsp").forward(request, response);
 			}
 		} else {
 			request.setAttribute("error", "Error al obtener el usuario");
-			request.getRequestDispatcher("editUser.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/editUser.jsp").forward(request, response);
 		}
 	}
 	
@@ -232,7 +232,7 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
 		} else {
 			request.setAttribute("error", "Error al eliminar el usuario");
-			request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/manageUsers.jsp").forward(request, response);
 		}
 	}
 	
@@ -249,7 +249,7 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("Admin_S?action=ManageUsers").forward(request, response);
 		} else {
 			request.setAttribute("error", "Error al restaurar el usuario con ID: " + id_user);
-			request.getRequestDispatcher("manageUsers.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/manageUsers.jsp").forward(request, response);
 		}
 	}
 	
@@ -269,7 +269,7 @@ public class Admin_S extends HttpServlet {
 		}
 		request.setAttribute("order", order);
 		request.setAttribute("listTopics", listTopics);
-		request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/manageTopics.jsp").forward(request, response);
 	}
 
 	// Gestionar temas eliminados
@@ -287,7 +287,7 @@ public class Admin_S extends HttpServlet {
 		
 		request.setAttribute("order", order);
 		request.setAttribute("listDeletedTopics", listDeletedUsers);
-		request.getRequestDispatcher("manageDeletedTopics.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/manageDeletedTopics.jsp").forward(request, response);
 	}
 	
 	// Editar tema
@@ -300,7 +300,7 @@ public class Admin_S extends HttpServlet {
 		
 		request.setAttribute("topic", topic);
 		request.setAttribute("comesBack", comesBack);
-		request.getRequestDispatcher("editTopic.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/editTopic.jsp").forward(request, response);
 	}
 
 	// Guardar tema
@@ -327,7 +327,7 @@ public class Admin_S extends HttpServlet {
 			if (comesBack) {
 				Topic_E returnTheTopic = topicDAO.getTopicById(id_topic);
 				request.setAttribute("topic", returnTheTopic);
-				request.getRequestDispatcher("topic.jsp").forward(request, response);
+				request.getRequestDispatcher("jsp/secciones/topic.jsp").forward(request, response);
 				return;
 			}
 
@@ -335,7 +335,7 @@ public class Admin_S extends HttpServlet {
 
 		} else {
 			request.setAttribute("error", "Error al actualizar el tema");
-			request.getRequestDispatcher("editTopic.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/editTopic.jsp").forward(request, response);
 		}
 	}
 	
@@ -369,7 +369,7 @@ public class Admin_S extends HttpServlet {
 			request.setAttribute("error", "Error al eliminar el tema");
 			
 			if (currentUser.getTipo_usuario().equals("admin")) {
-				request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
+				request.getRequestDispatcher("jsp/admin/manageTopics.jsp").forward(request, response);
 			} else {
 				request.getRequestDispatcher("InitialConfi_S").forward(request, response);
 			}
@@ -387,7 +387,7 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("Admin_S?action=ManageTopics").forward(request, response);
 		} else {
 			request.setAttribute("error", "Error al restaurar el tema");
-			request.getRequestDispatcher("manageTopics.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/manageTopics.jsp").forward(request, response);
 		}
 	}
 	
@@ -408,7 +408,7 @@ public class Admin_S extends HttpServlet {
 		
 		request.setAttribute("order", order);
 		request.setAttribute("listCategories", listCategories);
-		request.getRequestDispatcher("manageCategories.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/manageCategories.jsp").forward(request, response);
 	}
 
 	private void manageDeletedCategories(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -425,7 +425,7 @@ public class Admin_S extends HttpServlet {
 		
 		request.setAttribute("order", order);
 		request.setAttribute("listDeletedCategories", listDeletedCategories);
-		request.getRequestDispatcher("manageDeletedCategories.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/manageDeletedCategories.jsp").forward(request, response);
 	}
 
 	private void registerCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -447,12 +447,12 @@ public class Admin_S extends HttpServlet {
 		        // Comprobar que sea una extensión permitida
 		        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
 		            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
-		            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		            request.getRequestDispatcher("jsp/admin/registerCategory.jsp").forward(request, response);
 		            return;
 		        }
 		    } else {
 		        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
-		        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		        request.getRequestDispatcher("jsp/admin/registerCategory.jsp").forward(request, response);
 		        return;
 		    }
 		    
@@ -490,7 +490,7 @@ public class Admin_S extends HttpServlet {
 	        request.getRequestDispatcher("Admin_S?action=ManageCategories").forward(request, response);
 	    } else {
 	        request.setAttribute("error", "Error al registrar la categoría");
-	        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+	        request.getRequestDispatcher("jsp/admin/registerCategory.jsp").forward(request, response);
 	    }
 	}
 	
@@ -500,7 +500,7 @@ public class Admin_S extends HttpServlet {
 		Category_E category = categoryDAO.getCategoryById(Integer.parseInt(id_category));
 		
 		request.setAttribute("category", category);
-		request.getRequestDispatcher("editCategory.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/admin/editCategory.jsp").forward(request, response);
 	}
 	
 	private void updateCategory(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -522,12 +522,12 @@ public class Admin_S extends HttpServlet {
 		        // Comprobar que sea una extensión permitida
 		        if (!".ico".equals(extension) && !".png".equals(extension) && !".jpg".equals(extension) && !".jpeg".equals(extension)) {
 		            request.setAttribute("error", "Formato de imagen no permitido. Use .ico, .png, .jpg o .jpeg");
-		            request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		            request.getRequestDispatcher("jsp/admin/registerCategory.jsp").forward(request, response);
 		            return;
 		        }
 		    } else {
 		        request.setAttribute("error", "El archivo debe tener una extensión válida (.ico, .png, .jpg, .jpeg)");
-		        request.getRequestDispatcher("registerCategory.jsp").forward(request, response);
+		        request.getRequestDispatcher("jsp/admin/registerCategory.jsp").forward(request, response);
 		        return;
 		    }
 		    
@@ -564,7 +564,7 @@ public class Admin_S extends HttpServlet {
 
 		} else {
 			request.setAttribute("error", "Error al actualizar la categoria");
-			request.getRequestDispatcher("editCategory.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/editCategory.jsp").forward(request, response);
 		}
 	}
 	
@@ -578,7 +578,7 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("Admin_S?action=ManageCategories").forward(request, response);
 		} else {
 			request.setAttribute("error", "Error al eliminar la categoria");
-			request.getRequestDispatcher("manageCategories.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/manageCategories.jsp").forward(request, response);
 		}
 	}
 	
@@ -592,7 +592,7 @@ public class Admin_S extends HttpServlet {
 			request.getRequestDispatcher("Admin_S?action=ManageCategories").forward(request, response);
 		} else {
 			request.setAttribute("error", "Error al restaurar la categoria");
-			request.getRequestDispatcher("manageCategories.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/manageCategories.jsp").forward(request, response);
 		}
 	}
 	

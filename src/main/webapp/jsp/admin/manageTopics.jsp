@@ -1,26 +1,29 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
-    <jsp:param name="titulo" value="Temas eliminados" />
+<jsp:include page="../inicio/header.jsp">
+	<jsp:param name="titulo" value="Gestionar Temas" />
 </jsp:include>
 
 <div class="container py-5">
     <div class="mb-4">
-        <h2 class="text-center">Temas Eliminados</h2>
+        <h2 class="text-center">Temas Publicados</h2>
     </div>
 
     <form method="get" action="${pageContext.request.contextPath}/Admin_S" class="row g-2 justify-content-center mb-4">
         <div class="col-md-8">
-            <input type="text" name="keyword" class="form-control" placeholder="Buscar por título, contenido, categoría, estado o autor..." value="${param.keyword}">
+            <input type="text" name="keyword" class="form-control"
+                placeholder="Buscar por título, contenido, categoría, estado o autor..."
+                value="${keyword}">
         </div>
 
         <input type="hidden" name="order" value="${order == 'ASC' ? 'DESC' : 'ASC'}" />
 
         <div class="col-auto">
-            <button type="submit" name="action" value="ManageDeletedTopics" class="btn" style="background-color: steelblue; color: white;">
+            <button type="submit" name="action" value="ManageTopics" class="btn" style="background-color: steelblue; color: white;">
                 Ordenar:
                 <c:choose>
                     <c:when test="${order == 'DESC'}">⬆ ASC</c:when>
@@ -30,17 +33,17 @@
         </div>
 
         <div class="col-auto">
-            <button type="submit" name="action" value="ManageDeletedTopics" class="btn" style="background-color: steelblue; color: white;">
+            <button type="submit" name="action" value="ManageTopics" class="btn" style="background-color: steelblue; color: white;">
                 Buscar
             </button>
         </div>
     </form>
 
-    <c:if test="${empty listDeletedTopics}">
-        <div class="alert alert-info text-center">No hay temas eliminados.</div>
+    <c:if test="${empty listTopics}">
+        <div class="alert alert-info text-center">No hay temas publicados.</div>
     </c:if>
 
-    <c:if test="${not empty listDeletedTopics}">
+    <c:if test="${not empty listTopics}">
         <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle text-center">
                 <thead class="table-light">
@@ -57,7 +60,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="topic" items="${listDeletedTopics}">
+                    <c:forEach var="topic" items="${listTopics}">
                         <tr>
                             <td>${topic.id_tema}</td>
                             <td>${topic.nombreUsuario} ${topic.apellidoUsuario}</td>
@@ -72,11 +75,11 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="${pageContext.request.contextPath}/Admin_S?action=RestoreTopic&id_topic=${topic.id_tema}" 
-                                   onclick="return confirm('¿Estás seguro de restaurar este tema?');" 
-                                   class="btn btn-sm btn-success">
-                                    Restaurar
-                                </a>
+                                <a href="${pageContext.request.contextPath}/Admin_S?action=EditTopic&id_topic=${topic.id_tema}"
+                                   class="btn btn-sm btn-primary">Editar</a>
+                                <a href="${pageContext.request.contextPath}/Admin_S?action=DeleteTopic&id_topic=${topic.id_tema}"
+                                   onclick="return confirm('¿Estás seguro de eliminar este tema?');"
+                                   class="btn btn-sm btn-danger">Eliminar</a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -87,9 +90,9 @@
 
     <div class="d-flex justify-content-between mt-4">
         <a href="${pageContext.request.contextPath}/Admin_S?action=adminPanel" class="btn btn-link">← Volver al Panel</a>
-        <a href="${pageContext.request.contextPath}/Admin_S?action=ManageTopics" class="btn btn-link">Ver temas activos →</a>
+        <a href="${pageContext.request.contextPath}/Admin_S?action=ManageDeletedTopics" class="btn btn-link">Ver temas eliminados →</a>
     </div>
 </div>
 
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

@@ -46,7 +46,7 @@
 						href="${pageContext.request.contextPath}/InitialConfi_S">Inicio</a>
 					</li>
 					<li class="nav-item"><a class="nav-link"
-						href="${pageContext.request.contextPath}/categories.jsp">Categorías</a>
+						href="${pageContext.request.contextPath}/jsp/inicio/categories.jsp">Categorías</a>
 					</li>
 				</ul>
 
@@ -61,7 +61,7 @@
 								<ul class="dropdown-menu dropdown-menu-end"
 									aria-labelledby="userDropdown">
 									<li><a class="dropdown-item"
-										href="${pageContext.request.contextPath}/profileUser.jsp">Mi
+										href="${pageContext.request.contextPath}/jsp/autenticacion/profileUser.jsp">Mi
 											Perfil</a></li>
 									<c:if
 										test="${sessionScope.currentUser.tipo_usuario == 'admin'}">
@@ -76,13 +76,8 @@
 						</c:when>
 						<c:otherwise>
 							<li class="nav-item"><a class="nav-link"
-								href="${pageContext.request.contextPath}/login.jsp">Iniciar
+								href="${pageContext.request.contextPath}/jsp/autenticacion/login.jsp">Iniciar
 									Sesión</a></li>
-							<c:if test="${sessionScope.currentUser.tipo_usuario == 'admin'}">
-								<li class="nav-item"><a class="nav-link"
-									href="${pageContext.request.contextPath}/register.jsp">Registrar
-										nueva usuario</a></li>
-							</c:if>
 						</c:otherwise>
 					</c:choose>
 				</ul>

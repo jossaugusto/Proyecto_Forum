@@ -90,6 +90,6 @@ public class InitialConfi_S extends HttpServlet {
 		}
 
 		// Redireccionar a la vista
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/inicio/index.jsp").forward(request, response);
 	}
 }

@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
     <jsp:param name="titulo" value="Editar Perfil" />
 </jsp:include>
 
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageUsers" class="btn btn-secondary">Cancelar</a>
+                    <a href="javaScript:history.back()" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" name="action" value="UpdateUser" class="btn btn-success">Guardar Cambios</button>
                 </div>
             </form>
@@ -49,5 +49,19 @@
     </div>
 </div>
 
+<script>
+    function validarFormulario() {
+        var email = document.getElementById("email").value;
 
-<jsp:include page="footer.jsp" />
+        // Validar formato de correo
+        var correoRegex = /^[a-zA-Z0-9._%+-]+@forum\.pe$/;
+        if (!correoRegex.test(email)) {
+            alert("El correo debe tener el formato usuario@forum.pe");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+<jsp:include page="../inicio/footer.jsp" />

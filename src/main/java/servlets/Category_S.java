@@ -50,7 +50,7 @@ public class Category_S extends HttpServlet {
 			request.setAttribute("listTopicsByCategoryId", listTopicsByCategoryId);
 		}
 		
-		request.getRequestDispatcher("topicByCategory.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/secciones/topicByCategory.jsp").forward(request, response);
 	}
 	
 }

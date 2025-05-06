@@ -74,7 +74,7 @@ public class Notification_S extends HttpServlet {
 			// Mark the notification as read
 			notificationDAO.markAsRead(notification.getId_notificacion());
 			request.setAttribute("notification", notification);
-			request.getRequestDispatcher("notificationDetailsModal.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/modal/notificationDetailsModal.jsp").forward(request, response);
 		}
 
 	}

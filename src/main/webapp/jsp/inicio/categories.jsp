@@ -11,7 +11,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold">Categorías</h2>
         <c:if test="${not empty sessionScope.currentUser && (sessionScope.currentUser.tipo_usuario == 'admin' or sessionScope.currentUser.tipo_usuario == 'profesor')}">
-            <a href="${pageContext.request.contextPath}/registerCategory.jsp" class="btn btn-primary">
+            <a href="${pageContext.request.contextPath}/jsp/admin/registerCategory.jsp" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-1"></i>Nueva Categoría
             </a>
         </c:if>

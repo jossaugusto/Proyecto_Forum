@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
     <jsp:param name="titulo" value="Perfil de Usuario" />
 </jsp:include>
 
@@ -39,7 +39,7 @@
             </ul>
 
             <div>
-                <a href="${pageContext.request.contextPath}/editProfile.jsp" 
+                <a href="${pageContext.request.contextPath}/jsp/autenticacion/editProfile.jsp" 
                    class="btn" style="background-color: steelblue; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
                     Editar Perfil
                 </a>
@@ -50,4 +50,4 @@
 
 
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

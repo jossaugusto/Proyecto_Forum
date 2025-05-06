@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
     <jsp:param name="titulo" value="Gestionar Usuarios" />
 </jsp:include>
 
@@ -38,7 +38,7 @@
     </form>
 
     <div class="mb-4 text-center">
-        <a href="register.jsp" class="btn btn-success">Registrar nuevo usuario</a>
+        <a href="registerUser.jsp" class="btn btn-outline-primary rounded-pill px-4">Registrar nuevo usuario</a>
     </div>
 
     <c:if test="${empty listUsers}">
@@ -90,4 +90,4 @@
 </div>
 
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

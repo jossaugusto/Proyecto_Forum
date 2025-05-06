@@ -3,7 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
     <jsp:param name="titulo" value="Crear Tema" />
 </jsp:include>
 
@@ -49,11 +49,11 @@
 
         <c:otherwise>
             <div class="alert alert-warning text-center">
-                Debes <a href="${pageContext.request.contextPath}/login.jsp" class="alert-link">iniciar sesión</a> para crear un tema.
+                Debes <a href="${pageContext.request.contextPath}/jsp/autenticacion/login.jsp" class="alert-link">iniciar sesión</a> para crear un tema.
             </div>
         </c:otherwise>
     </c:choose>
 </div>
 
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

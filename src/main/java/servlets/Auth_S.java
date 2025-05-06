@@ -54,10 +54,11 @@ public class Auth_S extends HttpServlet {
 			User_E user = userDAO.getUserByEmail(email);
 
 			if (user.getFlgstate() == 0) {
-	            request.setAttribute("deletedAccount", true); // <-- Avisa a login.jsp
+	            request.setAttribute("deletedAccount", true);
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 				return;
 			}
+			
 			HttpSession session = request.getSession();
 			
 			session.setAttribute("currentUser", user);
@@ -65,7 +66,7 @@ public class Auth_S extends HttpServlet {
 			
 		} else {
 			request.setAttribute("message", "usuario y/o contraseña incorrectos");
-			request.getRequestDispatcher("login.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/autenticacion/login.jsp").forward(request, response);
 		}
 		
 	}
@@ -99,10 +100,10 @@ public class Auth_S extends HttpServlet {
 				notificationDAO.createNotification(id_admin, "registro","Un nuevo usuario se ha registrado en el foro. " + name + " " + lastname + " con el email: " + email);
 			}
 			request.setAttribute("exito", "Se registró correctamente el usuario");
-			request.getRequestDispatcher("Admin_S").forward(request, response);
+			request.getRequestDispatcher("InitialConfi_S").forward(request, response);
 		} else {
 			request.setAttribute("message", "Error al registrar el usuario");
-			request.getRequestDispatcher("register.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/admin/registerUser.jsp").forward(request, response);
 		}
 	}
 

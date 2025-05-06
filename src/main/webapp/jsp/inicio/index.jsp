@@ -25,7 +25,7 @@
 					<h5 class="card-title text-steelblue mb-3">
 						<i class="bi bi-bell-fill me-2"></i>Mis Notificaciones
 					</h5>
-					<jsp:include page="_myNotifications.jsp" />
+					<jsp:include page="../secciones/_myNotifications.jsp" />
 				</div>
 			</div>
 		</div>
@@ -36,7 +36,7 @@
 					<h5 class="card-title text-steelblue mb-3">
 						<i class="bi bi-chat-dots-fill me-2"></i>Mis Temas
 					</h5>
-					<jsp:include page="_myTopics.jsp" />
+					<jsp:include page="../secciones/_myTopics.jsp" />
 				</div>
 			</div>
 		</div>
@@ -47,7 +47,7 @@
 		<div class="col-lg-6 mb-4">
 			<div class="card shadow-sm border-0 h-100">
 				<div class="card-body">
-					<jsp:include page="_categories.jsp" />
+					<jsp:include page="../secciones/_categories.jsp" />
 				</div>
 			</div>
 		</div>
@@ -55,7 +55,7 @@
 		<div class="col-lg-6 mb-4">
 			<div class="card shadow-sm border-0 h-100">
 				<div class="card-body">
-					<jsp:include page="_recentTopics.jsp" />
+					<jsp:include page="../secciones/_recentTopics.jsp" />
 				</div>
 			</div>
 		</div>

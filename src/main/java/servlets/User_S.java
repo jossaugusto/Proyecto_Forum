@@ -70,10 +70,10 @@ public class User_S extends HttpServlet {
             if (updated) {
                 session.setAttribute("currentUser", currentUser);
                 request.setAttribute("exito", "Perfil actualizado correctamente.");
-                request.getRequestDispatcher("profileUser.jsp").forward(request, response);
+                request.getRequestDispatcher("jsp/autenticacion/profileUser.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Hubo un error al actualizar el perfil.");
-                request.getRequestDispatcher("editProfile.jsp").forward(request, response);
+                request.getRequestDispatcher("jsp/autenticacion/editProfile.jsp").forward(request, response);
             }
     }
 }

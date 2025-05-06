@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
 	<jsp:param name="titulo" value="Tema" />
 </jsp:include>
 
@@ -97,7 +97,7 @@
                                             <button type="submit" name="action" value="editReply" class="btn btn-primary btn-sm">Guardar</button>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" href="#editReply-${respuesta.id_respuesta}">Cancelar</button>
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" id="#editReply-${respuesta.id_respuesta}">Cancelar</button>
                                         </div>
                                     </form>
                                 </div>
@@ -153,7 +153,7 @@
                                                                 <button type="submit" name="action" value="editReply" class="btn btn-primary btn-sm">Guardar</button>
                                                             </div>
                                                             <div class="col-auto">
-                                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" href="#editReply-${subRespuesta.id_respuesta}">Cancelar</button>
+                                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" id="#editReply-${subRespuesta.id_respuesta}">Cancelar</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -214,7 +214,7 @@
             </c:when>
             <c:otherwise>
                 <p class="alert alert-warning" role="alert">
-                    Debes <a href="${pageContext.request.contextPath}/login.jsp" class="alert-link">iniciar sesión</a> para responder.
+                    Debes <a href="${pageContext.request.contextPath}/jsp/autenticacion/login.jsp" class="alert-link">iniciar sesión</a> para responder.
                 </p>
             </c:otherwise>
         </c:choose>
@@ -258,4 +258,4 @@
     });
 </script>
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

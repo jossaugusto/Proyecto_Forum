@@ -8,7 +8,7 @@
     <title>Foro - Registro</title>
    	<!-- Estilos personalizados -->
     <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
-
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-5">
@@ -19,7 +19,7 @@
                     <h3 class="text-center font-weight-light my-4">Registro</h3>
                 </div>
                 <div class="card-body">
-                    <form action="Auth_S" method="post" onsubmit="return validarFormulario()">
+                    <form action="${pageContext.request.contextPath}/Auth_S" method="post" onsubmit="return validarFormulario()">
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre:</label>
                             <input type="text" class="form-control" id="name" name="name" required>
@@ -54,7 +54,7 @@
                     </form>
                     <div class="mt-3 text-center">
                         <p class="mb-0">
-                            <a href="${pageContext.request.contextPath}/Admin_S?action=ManageUsers" class="text-info">Cancelar</a>
+                            <a href="javaScript:history.back()" class="text-info">Cancelar</a>
                         </p>
                     </div>
                     <c:if test="${not empty message}">

@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
     <jsp:param name="titulo" value="Editar Categoría" />
 </jsp:include>
 
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageCategories"
+                    <a href="javaScript:history.back()"
                        class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-success">Guardar Cambios</button>
                 </div>
@@ -61,4 +61,4 @@
 </div>
 
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<jsp:include page="header.jsp">
+<jsp:include page="../inicio/header.jsp">
     <jsp:param name="titulo" value="Registrar Categoría" />
 </jsp:include>
 
@@ -27,7 +27,7 @@
                     <small class="form-text text-muted">Opcional. Se aceptan archivos JPG, PNG, JPEG, ICO.</small>
                 </div>
                 <div class="col-12">
-                    <a href="${pageContext.request.contextPath}/Admin_S?action=ManageCategories" class="btn btn-secondary">
+                    <a href="javaScript:history.back()" class="btn btn-secondary">
                         <i class="bi bi-arrow-left me-2"></i> Cancelar
                     </a>
                     <button type="submit" class="btn btn-success">
@@ -39,4 +39,4 @@
     </div>
 </div>
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../inicio/footer.jsp" />

@@ -82,7 +82,7 @@ public class Topic_S extends HttpServlet {
 			request.setAttribute("topic", topic);
 			request.setAttribute("listRepliesByTopicId", listRepliesByTopicId);
 			request.setAttribute("repliesByParent", repliesByParent);
-			request.getRequestDispatcher("topic.jsp").forward(request, response);
+			request.getRequestDispatcher("jsp/secciones/topic.jsp").forward(request, response);
 			
 		} else {
 			System.out.println("No se ha encontrado el id del tema");
@@ -113,7 +113,7 @@ public class Topic_S extends HttpServlet {
 	        response.sendRedirect("InitialConfi_S");
 	    } else {
 	    	request.setAttribute("error", "Error al crear el tema");
-	    	request.getRequestDispatcher("newTopic.jsp").forward(request, response);
+	    	request.getRequestDispatcher("jsp/secciones/newTopic.jsp").forward(request, response);
 	    }
 	}
 
