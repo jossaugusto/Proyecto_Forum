@@ -38,7 +38,7 @@
     </form>
 
     <div class="mb-4 text-center">
-        <a href="registerUser.jsp" class="btn btn-outline-primary rounded-pill px-4">Registrar nuevo usuario</a>
+        <a href="jsp/admin/registerUser.jsp" class="btn btn-outline-primary rounded-pill px-4">Registrar nuevo usuario</a>
     </div>
 
     <c:if test="${empty listUsers}">

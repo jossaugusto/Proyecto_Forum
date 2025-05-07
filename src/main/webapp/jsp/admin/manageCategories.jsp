@@ -37,7 +37,7 @@
     </form>
 
     <div class="text-center mb-3">
-        <a href="${pageContext.request.contextPath}/registerCategory.jsp" class="btn btn-outline-primary rounded-pill px-4">
+        <a href="jsp/admin/registerCategory.jsp" class="btn btn-outline-primary rounded-pill px-4">
             Registrar Nueva Categoría
         </a>
     </div>
