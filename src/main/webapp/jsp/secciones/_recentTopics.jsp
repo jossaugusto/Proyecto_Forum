@@ -9,7 +9,7 @@
 		<h5 class="card-title text-steelblue mb-3">
 			<i class="bi bi-clock-history me-2"></i>Temas Recientes
 		</h5>
-		<a href="${pageContext.request.contextPath}/newTopic.jsp"
+		<a href="${pageContext.request.contextPath}/jsp/secciones/newTopic.jsp"
 			class="btn btn-sm mb-3"
 			style="background-color: steelblue; color: white; position: absolute; right: 2.5rem">
 			<i class="bi bi-plus-circle me-1"></i>Nuevo Tema
